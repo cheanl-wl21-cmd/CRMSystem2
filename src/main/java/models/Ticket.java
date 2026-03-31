@@ -8,11 +8,11 @@ import enums.Priority;
 import enums.TicketStatus;
 import interfaces.Displayable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.ArrayList; // create arraylist for sorting purpose 
 import java.util.Date;
-import java.util.List;
+import java.util.List;// create arraylist for sorting purpose 
 
-public class Ticket implements Displayable {
+public class Ticket implements Displayable {  //Abstraction
     private String ticketId;
     private String productId;
     private String customerId;
@@ -26,8 +26,12 @@ public class Ticket implements Displayable {
     private List<Attachment> attachments;
     private Feedback feedback;
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// make a constant data format
 
+    // No-argument constructor
+    public Ticket() { 
+       
+    }
     public Ticket(String ticketId, String productId, String description, Priority priority) {
         this.ticketId = ticketId;
         this.productId = productId;
@@ -109,23 +113,59 @@ public class Ticket implements Displayable {
     }
 
     // Getters and Setters
-    public String getTicketId() { return ticketId; }
-    public String getProductId() { return productId; }
-    public String getCustomerId() { return customerId; }
-    public String getAssignedStaffId() { return assignedStaffId; }
-    public String getDescription() { return description; }
-    public Priority getPriority() { return priority; }
-    public TicketStatus getStatus() { return status; }
-    public Date getDateSubmitted() { return dateSubmitted; }
-    public Date getDateClosed() { return dateClosed; }
-    public List<Message> getMessages() { return messages; }
-    public List<Attachment> getAttachments() { return attachments; }
-    public Feedback getFeedback() { return feedback; }
+    public String getTicketId() { 
+        return ticketId; 
+    }
+    public String getProductId() { 
+        return productId;
+    }
+    public String getCustomerId() { 
+        return customerId; 
+    }
+    public String getAssignedStaffId() { 
+        return assignedStaffId; 
+    }
+    public String getDescription() {
+        return description; 
+    }
+    public Priority getPriority() { 
+        return priority; 
+    }
+    public TicketStatus getStatus() { 
+        return status;
+    }
+    public Date getDateSubmitted() {
+        return dateSubmitted; 
+    }
+    public Date getDateClosed() { 
+        return dateClosed;
+    }
+    public List<Message> getMessages() { 
+        return messages;
+    }
+    public List<Attachment> getAttachments() { 
+        return attachments;
+    }
+    public Feedback getFeedback() { 
+        return feedback;
+    }
 
-    public void setCustomerId(String customerId) { this.customerId = customerId; }
-    public void setAssignedStaffId(String assignedStaffId) { this.assignedStaffId = assignedStaffId; }
-    public void setDescription(String description) { this.description = description; }
-    public void setPriority(Priority priority) { this.priority = priority; }
-    public void setDateClosed(Date dateClosed) { this.dateClosed = dateClosed; }
-    public void setFeedback(Feedback feedback) { this.feedback = feedback; }
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+    public void setAssignedStaffId(String assignedStaffId) { 
+        this.assignedStaffId = assignedStaffId;
+    }
+    public void setDescription(String description) { 
+        this.description = description; 
+    }
+    public void setPriority(Priority priority) {
+        this.priority = priority; 
+    }
+    public void setDateClosed(Date dateClosed) { 
+        this.dateClosed = dateClosed; 
+    }
+    public void setFeedback(Feedback feedback) { 
+        this.feedback = feedback;
+    }
 }
