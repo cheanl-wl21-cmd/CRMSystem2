@@ -26,7 +26,7 @@ public enum StaffRole {
                 return role;
             }
         }
-        return SUPPORT_AGENT;
+        return null;
     }
 }
 

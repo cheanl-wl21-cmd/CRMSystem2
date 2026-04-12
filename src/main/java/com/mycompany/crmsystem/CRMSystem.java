@@ -102,9 +102,21 @@ public class CRMSystem {
         String password = scanner.nextLine().trim();
         System.out.print("Address: ");
         String address = scanner.nextLine().trim();
+        
+        System.out.println("Checking---");
 
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             System.out.println("All fields are required!");
+            return;
+        }
+        
+        if (!authService.isValid(email)) {
+            System.out.println("Email format is invalid!");
+            return;
+        }
+        
+        if (!authService.isValidPassword(password)) {
+            System.out.println("Password format is invalid! Should be at least 8 - 15 number or alphabet");
             return;
         }
 

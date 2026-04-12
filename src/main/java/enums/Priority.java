@@ -31,6 +31,6 @@ public enum Priority {
                 return p;
             }
         }
-        return LOW;
+        return null;
     }
 }

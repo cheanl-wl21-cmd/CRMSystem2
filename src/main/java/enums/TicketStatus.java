@@ -27,7 +27,7 @@ public enum TicketStatus {
                 return status;
             }
         }
-        return OPEN;
+        return null;
     }
 }
 
