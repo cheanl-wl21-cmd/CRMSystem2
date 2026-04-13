@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package services;
 
 import enums.Priority;
@@ -11,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataStore {
-    private static DataStore instance;
+    private static DataStore database;
     
     private List<User> users;
     private List<Ticket> tickets;
@@ -31,10 +27,10 @@ public class DataStore {
     }
 
     public static DataStore getInstance() {
-        if (instance == null) {
-            instance = new DataStore();
+        if (database == null) {
+            database = new DataStore();
         }
-        return instance;
+        return database;
     }
 
     private void initializeSampleData() {
@@ -96,7 +92,6 @@ public class DataStore {
     public String generateUserId() {
         return String.valueOf(++userCounter);
     }
-
     // Getters
     public List<User> getUsers() { return users; }
     public List<Ticket> getTickets() { return tickets; }
@@ -107,28 +102,32 @@ public class DataStore {
     public void addTicket(Ticket ticket) { tickets.add(ticket); }
 
     public User findUserByEmail(String email) {
-        return users.stream()
-            .filter(u -> u.getEmail().equalsIgnoreCase(email))
-            .findFirst()
-            .orElse(null);
+        for (User u : users) {
+            if (u.getEmail().equalsIgnoreCase(email)) {
+                return u; 
+            }
+        }
+        return null; 
     }
-
     public Ticket findTicketById(String ticketId) {
-        return tickets.stream()
-            .filter(t -> t.getTicketId().equalsIgnoreCase(ticketId))
-            .findFirst()
-            .orElse(null);
+        for (Ticket t : tickets) {
+            if (t.getTicketId().equalsIgnoreCase(ticketId)) {
+                return t;
+            }
+        }
+        return null;
     }
-
     public Staff findStaffById(String staffId) {
-        return users.stream()
-            .filter(u -> u instanceof Staff)
-            .map(u -> (Staff) u)
-            .filter(s -> s.getStaffId().equals(staffId))
-            .findFirst()
-            .orElse(null);
+        for (User u : users) {
+            if (u instanceof Staff) { //filter out the normal customers
+                Staff s = (Staff) u; 
+                if (s.getStaffId().equals(staffId)) {
+                    return s;
+                }
+            }
+        }
+        return null;
     }
-
     public List<Ticket> getTicketsByCustomer(String custId) {
         List<Ticket> result = new ArrayList<>();
         for (Ticket t : tickets) {
