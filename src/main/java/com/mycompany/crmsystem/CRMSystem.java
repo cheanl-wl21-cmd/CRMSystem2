@@ -20,9 +20,9 @@ public class CRMSystem {
     private static DataStore dataStore = DataStore.getInstance();
 
     public static void main(String[] args) {
-        System.out.println("╔════════════════════════════════════════════════════════════╗");
-        System.out.println("║     WELCOME TO CRM SYSTEM - Customer Relationship Manager  ║");
-        System.out.println("╚════════════════════════════════════════════════════════════╝");
+        System.out.println("\n+--------------------------------------------------------+");
+    System.out.println("|WELCOME TO ONLINE APPAREL SHOP CUSTOMER RELATION SYSTEM |");
+    System.out.println("+--------------------------------------------------------+");
         
         boolean running = true;
         while (running) {
@@ -45,15 +45,15 @@ public class CRMSystem {
     }
 
     private static boolean showMainMenu() {
-        System.out.println("\n╔════════════════════════════════╗");
-        System.out.println("║         MAIN MENU              ║");
-        System.out.println("╠════════════════════════════════╣");
-        System.out.println("║  1. Login                      ║");
-        System.out.println("║  2. Register (Customer)        ║");
-        System.out.println("║  3. View FAQs                  ║");
-        System.out.println("║  4. View Products              ║");
-        System.out.println("║  0. Exit                       ║");
-        System.out.println("╚════════════════════════════════╝");
+    System.out.println("\n+---------------------------------------+");
+    System.out.println("|               MAIN MENU               |");
+    System.out.println("+---------------------------------------+");
+    System.out.printf("|  %-35s  |%n", "1. Login");
+    System.out.printf("|  %-35s  |%n", "2. Register (Customer)");
+    System.out.printf("|  %-35s  |%n", "3. View FAQs");
+    System.out.printf("|  %-35s  |%n", "4. View Products");
+    System.out.printf("|  %-35s  |%n", "0. Exit");
+    System.out.println("+---------------------------------------+");
         System.out.print("Enter your choice: ");
 
         int choice = getIntInput();
@@ -127,9 +127,9 @@ public class CRMSystem {
     }
 
     private static void viewFAQs() {
-        System.out.println("\n╔════════════════════════════════════════╗");
-        System.out.println("║        FREQUENTLY ASKED QUESTIONS       ║");
-        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("\n==========================================");
+System.out.println("        FREQUENTLY ASKED QUESTIONS        ");
+System.out.println("==========================================");
         
         List<FAQ> faqs = FAQ.getAllFAQs();
         if (faqs.isEmpty()) {
@@ -143,9 +143,9 @@ public class CRMSystem {
     }
 
     private static void viewProducts() {
-        System.out.println("\n╔════════════════════════════════════════╗");
-        System.out.println("║            OUR PRODUCTS                 ║");
-        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("\n==========================================");
+System.out.println("        OUR PRODUCTS        ");
+System.out.println("==========================================");
         
         for (Product product : dataStore.getProducts()) {
             product.displayProductInfo();
@@ -155,19 +155,19 @@ public class CRMSystem {
 
     // ==================== CUSTOMER MENU ====================
     private static void showCustomerMenu(Customer customer) {
-        System.out.println("\n╔════════════════════════════════════════╗");
-        System.out.println("║         CUSTOMER DASHBOARD              ║");
-        System.out.println("║  Welcome, " + padRight(customer.getName(), 28) + "║");
-        System.out.println("╠════════════════════════════════════════╣");
-        System.out.println("║  1. Submit New Ticket                  ║");
-        System.out.println("║  2. View My Tickets                    ║");
-        System.out.println("║  3. View Ticket Details                ║");
-        System.out.println("║  4. Close Ticket                       ║");
-        System.out.println("║  5. Give Feedback                      ║");
-        System.out.println("║  6. Edit Profile                       ║");
-        System.out.println("║  7. View FAQs                          ║");
-        System.out.println("║  0. Logout                             ║");
-        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("\n+------------------------------------------+");
+        System.out.println("|            CUSTOMER DASHBOARD            |");
+        System.out.printf("|  Welcome, %-30s |%n", customer.getName());
+        System.out.println("+------------------------------------------+");
+        System.out.printf("|  %-38s  |%n", "1. Submit New Ticket");
+        System.out.printf("|  %-38s  |%n", "2. View My Tickets");
+        System.out.printf("|  %-38s  |%n", "3. View Ticket Details");
+        System.out.printf("|  %-38s  |%n", "4. Close Ticket");
+        System.out.printf("|  %-38s  |%n", "5. Give Feedback");
+        System.out.printf("|  %-38s  |%n", "6. Edit Profile");
+        System.out.printf("|  %-38s  |%n", "7. View FAQs");
+        System.out.printf("|  %-38s  |%n", "0. Logout");
+        System.out.println("+------------------------------------------+");
         System.out.print("Enter your choice: ");
 
         int choice = getIntInput();
@@ -355,27 +355,29 @@ public class CRMSystem {
         System.out.println("Profile updated successfully!");
     }
 
-    // ==================== STAFF MENU ====================
+    //staff menu
     private static void showStaffMenu(Staff staff) {
-        System.out.println("\n╔════════════════════════════════════════╗");
-        System.out.println("║           STAFF DASHBOARD               ║");
-        System.out.println("║  Welcome, " + padRight(staff.getName(), 28) + "║");
-        System.out.println("║  Role: " + padRight(staff.getStaffRole().getDisplayName(), 30) + "║");
-        System.out.println("╠════════════════════════════════════════╣");
-        System.out.println("║  1. View All Tickets                   ║");
-        System.out.println("║  2. View My Assigned Tickets           ║");
-        System.out.println("║  3. Search Tickets                     ║");
-        System.out.println("║  4. Filter by Status                   ║");
-        System.out.println("║  5. Filter by Priority                 ║");
-        System.out.println("║  6. View Ticket Details                ║");
-        System.out.println("║  7. Add Response to Ticket             ║");
-        System.out.println("║  8. Update Ticket Status               ║");
-        System.out.println("║  9. Take/Assign Ticket                 ║");
+        System.out.println("\n+------------------------------------------+");
+        System.out.println("|             STAFF DASHBOARD              |");
+        System.out.printf("|  Welcome, %-30s |%n", staff.getName());
+        System.out.printf("|  Role: %-33s |%n", staff.getStaffRole().getDisplayName());
+        System.out.println("+------------------------------------------+");
+        System.out.printf("|  %-38s  |%n", "1. View All Tickets");
+        System.out.printf("|  %-38s  |%n", "2. View My Assigned Tickets");
+        System.out.printf("|  %-38s  |%n", "3. Search Tickets");
+        System.out.printf("|  %-38s  |%n", "4. Filter by Status");
+        System.out.printf("|  %-38s  |%n", "5. Filter by Priority");
+        System.out.printf("|  %-38s  |%n", "6. View Ticket Details");
+        System.out.printf("|  %-38s  |%n", "7. Add Response to Ticket");
+        System.out.printf("|  %-38s  |%n", "8. Update Ticket Status");
+        System.out.printf("|  %-38s  |%n", "9. Take/Assign Ticket");
+
         if (staff.getStaffRole() == StaffRole.MANAGER || staff.getStaffRole() == StaffRole.TEAM_LEAD) {
-            System.out.println("║  10. Assign Ticket to Staff            ║");
-        }
-        System.out.println("║  0. Logout                             ║");
-        System.out.println("╚════════════════════════════════════════╝");
+        System.out.printf("|  %-38s  |%n", "10. Assign Ticket to Staff");
+}
+
+        System.out.printf("|  %-38s  |%n", "0. Logout");
+        System.out.println("+------------------------------------------+");
         System.out.print("Enter your choice: ");
 
         int choice = getIntInput();
@@ -599,19 +601,19 @@ public class CRMSystem {
 
     // ==================== ADMIN MENU ====================
     private static void showAdminMenu(Admin admin) {
-        System.out.println("\n╔════════════════════════════════════════╗");
-        System.out.println("║          ADMIN DASHBOARD                ║");
-        System.out.println("║  Welcome, " + padRight(admin.getName(), 28) + "║");
-        System.out.println("╠════════════════════════════════════════╣");
-        System.out.println("║  1. Generate Monthly Report            ║");
-        System.out.println("║  2. View All Tickets                   ║");
-        System.out.println("║  3. View All Users                     ║");
-        System.out.println("║  4. View Audit Logs                    ║");
-        System.out.println("║  5. Add New Staff                      ║");
-        System.out.println("║  6. Manage FAQs                        ║");
-        System.out.println("║  7. View Departments                   ║");
-        System.out.println("║  0. Logout                             ║");
-        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("\n+------------------------------------------+");
+        System.out.println("|             ADMIN DASHBOARD              |");
+        System.out.printf("|  Welcome, %-30s |%n", admin.getName());
+        System.out.println("+------------------------------------------+");
+        System.out.printf("|  %-38s  |%n", "1. Generate Monthly Report");
+        System.out.printf("|  %-38s  |%n", "2. View All Tickets");
+        System.out.printf("|  %-38s  |%n", "3. View All Users");
+        System.out.printf("|  %-38s  |%n", "4. View Audit Logs");
+        System.out.printf("|  %-38s  |%n", "5. Add New Staff");
+        System.out.printf("|  %-38s  |%n", "6. Manage FAQs");
+        System.out.printf("|  %-38s  |%n", "7. View Departments");
+        System.out.printf("|  %-38s  |%n", "0. Logout");
+        System.out.println("+------------------------------------------+");
         System.out.print("Enter your choice: ");
 
         int choice = getIntInput();
@@ -787,4 +789,6 @@ public class CRMSystem {
         return String.format("%-" + n + "s", s);
     }
 }
+
+
 
