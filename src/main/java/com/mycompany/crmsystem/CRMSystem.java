@@ -200,6 +200,9 @@ System.out.println("==========================================");
             default:
                 System.out.println("Invalid choice.");
         }
+        if (choice !=0){
+            pauseAndClear();
+        }
     }
 
     private static void submitNewTicket(Customer customer) {
@@ -423,6 +426,9 @@ System.out.println("==========================================");
             default:
                 System.out.println("Invalid choice.");
         }
+        if (choice != 0) {
+        pauseAndClear();
+}
     }
 
     private static void viewAssignedTickets(Staff staff) {
@@ -646,6 +652,8 @@ System.out.println("==========================================");
             default:
                 System.out.println("Invalid choice.");
         }
+        if (choice != 0) {
+        pauseAndClear();}
     }
 
     private static void generateReport(Admin admin) {
@@ -788,6 +796,18 @@ System.out.println("==========================================");
         }
         return String.format("%-" + n + "s", s);
     }
+    private static void pauseAndClear() {
+    System.out.println("\n+------------------------------------------+");
+    System.out.println("|      Press ENTER to continue...          |");
+    System.out.println("+------------------------------------------+");
+    scanner.nextLine(); // Wait for user to press Enter
+    
+    // "Clears" the screen by printing 50 empty lines
+    for (int i = 0; i < 50; i++) {
+        System.out.println();
+    }
+}
+
 }
 
 
