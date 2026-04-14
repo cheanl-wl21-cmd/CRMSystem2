@@ -1,14 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package services;
 
 import enums.Priority;
 import enums.TicketStatus;
+import java.util.ArrayList;
 import models.*;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 public class TicketService {
     private DataStore dataStore;
@@ -28,23 +26,41 @@ public class TicketService {
         return dataStore.getTickets();
     }
 
-    public List<Ticket> getTicketsByStatus(TicketStatus status) {
-        return dataStore.getTickets().stream()
-            .filter(t -> t.getStatus() == status)
-            .collect(Collectors.toList());
+   public List<Ticket> getTicketsByStatus(TicketStatus status) {
+        List<Ticket> resultList = new ArrayList<>();
+        
+        
+        for (Ticket t : dataStore.getTickets()) {
+            if (t.getStatus() == status) {
+                resultList.add(t);
+            }
+        }
+        return resultList;
     }
 
     public List<Ticket> getTicketsByPriority(Priority priority) {
-        return dataStore.getTickets().stream()
-            .filter(t -> t.getPriority() == priority)
-            .collect(Collectors.toList());
+        List<Ticket> resultList = new ArrayList<>();
+        
+        for (Ticket t : dataStore.getTickets()) {
+            if (t.getPriority() == priority) {
+                resultList.add(t);
+            }
+        }
+        return resultList;
     }
 
     public List<Ticket> searchTickets(String keyword) {
-        return dataStore.getTickets().stream()
-            .filter(t -> t.getDescription().toLowerCase().contains(keyword.toLowerCase()) ||
-                        t.getTicketId().toLowerCase().contains(keyword.toLowerCase()))
-            .collect(Collectors.toList());
+        List<Ticket> resultList = new ArrayList<>();
+        String searchWord = keyword.toLowerCase(); 
+        
+        for (Ticket t : dataStore.getTickets()) {
+            if (t.getDescription().toLowerCase().contains(searchWord) || 
+                t.getTicketId().toLowerCase().contains(searchWord)) {
+                
+                resultList.add(t);
+            }
+        }
+        return resultList;
     }
 
     public Ticket getTicketById(String ticketId) {

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package models;
 
 import interfaces.Displayable;
@@ -18,17 +15,14 @@ public class Attachment implements Displayable {
         this.fileSizeMB = fileSizeMB;
         this.filePath = "/uploads/" + fileName;
     }
-
-    public boolean uploadFileWithGUI() {
-        // Simulated file upload
-        System.out.println("Uploading file: " + fileName + "...");
-        System.out.println("File uploaded successfully!");
-        return true;
+   
+  public boolean uploadFile() {
+        return true; 
     }
 
-    public void downloadFile() {
-        System.out.println("Downloading file: " + fileName + " from " + filePath);
-        System.out.println("Download complete!");
+  
+    public String downloadFile() {
+        return "Downloading file: " + fileName + " from " + filePath + "...\nDownload complete!";
     }
 
     @Override

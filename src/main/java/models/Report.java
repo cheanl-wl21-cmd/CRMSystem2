@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package models;
 
 import enums.TicketStatus;
@@ -20,6 +16,13 @@ public class Report implements Displayable, Reportable {
     private int totalTicketsSubmitted;
     private int totalTicketsResolved;
     private double averageResponseTime; // in hours
+    
+    
+    public String getReportId() { return reportId; }
+    public Date getReportDate() { return reportDate; }
+    public int getTotalTicketsSubmitted() { return totalTicketsSubmitted; }
+    public int getTotalTicketsResolved() { return totalTicketsResolved; }
+    public double getAverageResponseTime() { return averageResponseTime; }
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -31,7 +34,7 @@ public class Report implements Displayable, Reportable {
     }
 
     public void generateReport(List<Ticket> allTickets) {
-        Calendar cal = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         
         totalTicketsSubmitted = 0;
         totalTicketsResolved = 0;
@@ -39,16 +42,16 @@ public class Report implements Displayable, Reportable {
         int responsesCount = 0;
 
         for (Ticket ticket : allTickets) {
-            cal.setTime(ticket.getDateSubmitted());
-            if (cal.get(Calendar.MONTH) + 1 == reportMonth && cal.get(Calendar.YEAR) == reportYear) {
+            calendar.setTime(ticket.getDateSubmitted());
+            if (calendar.get(Calendar.MONTH) + 1 == reportMonth && calendar.get(Calendar.YEAR) == reportYear) {
                 totalTicketsSubmitted++;
                 
                 if (ticket.getStatus() == TicketStatus.RESOLVED || ticket.getStatus() == TicketStatus.CLOSED) {
                     totalTicketsResolved++;
                     
                     if (ticket.getDateClosed() != null) {
-                        long diff = ticket.getDateClosed().getTime() - ticket.getDateSubmitted().getTime();
-                        totalResponseTime += diff;
+                        long different = ticket.getDateClosed().getTime() - ticket.getDateSubmitted().getTime();
+                        totalResponseTime += different;
                         responsesCount++;
                     }
                 }
@@ -99,11 +102,6 @@ public class Report implements Displayable, Reportable {
                 reportId, reportMonth, reportYear, totalTicketsSubmitted, totalTicketsResolved);
     }
 
-    // Getters
-    public String getReportId() { return reportId; }
-    public Date getReportDate() { return reportDate; }
-    public int getTotalTicketsSubmitted() { return totalTicketsSubmitted; }
-    public int getTotalTicketsResolved() { return totalTicketsResolved; }
-    public double getAverageResponseTime() { return averageResponseTime; }
+   
 }
 

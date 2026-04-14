@@ -387,7 +387,16 @@ System.out.println("==========================================");
 
         switch (choice) {
             case 1:
-                staff.viewAllTickets(ticketService.getAllTickets());
+                List<Ticket> allTickets = ticketService.getAllTickets();
+                
+                System.out.println("\n===== ALL TICKETS =====");
+                if (allTickets.isEmpty()) {
+                    System.out.println("No tickets in the system.");
+                } else {
+                    for (Ticket ticket : allTickets) {
+                        System.out.println(ticket.getDisplayInfo());
+                    }
+                }
                 break;
             case 2:
                 viewAssignedTickets(staff);
@@ -445,12 +454,15 @@ System.out.println("==========================================");
         }
     }
 
-    private static void searchTickets(Staff staff) {
+   private static void searchTickets(Staff staff) {
         System.out.print("\nEnter search keyword: ");
         String keyword = scanner.nextLine().trim();
-        staff.searchTicketByKeyword(ticketService.getAllTickets(), keyword);
+        List<Ticket> results = staff.searchTicketByKeyword(ticketService.getAllTickets(), keyword);
+        System.out.println("\n--- SEARCH RESULTS ---");
+        for (Ticket t : results) {
+            System.out.println(t.getDisplayInfo());
+        }
     }
-
     private static void filterByStatus(Staff staff) {
         System.out.println("\nSelect Status:");
         System.out.println("1. Open");

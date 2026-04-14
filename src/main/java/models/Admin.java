@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package models;
 
 import interfaces.Reportable;
@@ -11,6 +8,8 @@ import java.util.List;
 public class Admin extends User implements Reportable {
     private String adminId;
     private List<AuditLog> auditLogs;
+    
+    
 
     public Admin(String userId, String name, String email, String password) {
         super(userId, name, email, password);

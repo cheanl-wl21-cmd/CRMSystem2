@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package models;
 
 import enums.Priority;
@@ -9,7 +5,6 @@ import enums.StaffRole;
 import enums.TicketStatus;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Staff extends User {
     private String staffId;
@@ -25,58 +20,50 @@ public class Staff extends User {
         this.assignedTickets = new ArrayList<>();
     }
 
-    public List<Ticket> viewAllTickets(List<Ticket> allTickets) {
-        System.out.println("\n===== ALL TICKETS =====");
-        for (Ticket ticket : allTickets) {
-            System.out.println(ticket.getDisplayInfo());
-        }
-        return allTickets;
-    }
+    // --- LIST FILTERING METHODS (No Streams, No Printing) ---
 
     public List<Ticket> searchTicketByKeyword(List<Ticket> allTickets, String keyword) {
-        List<Ticket> results = allTickets.stream()
-            .filter(t -> t.getDescription().toLowerCase().contains(keyword.toLowerCase()) ||
-                        t.getTicketId().toLowerCase().contains(keyword.toLowerCase()) ||
-                        t.getProductId().toLowerCase().contains(keyword.toLowerCase()))
-            .collect(Collectors.toList());
+        List<Ticket> results = new ArrayList<>();
+        String searchWord = keyword.toLowerCase();
         
-        System.out.println("\n===== SEARCH RESULTS FOR: " + keyword + " =====");
-        for (Ticket ticket : results) {
-            System.out.println(ticket.getDisplayInfo());
+        for (Ticket t : allTickets) {
+            if (t.getDescription().toLowerCase().contains(searchWord) ||
+                t.getTicketId().toLowerCase().contains(searchWord) ||
+                t.getProductId().toLowerCase().contains(searchWord)) {
+                results.add(t);
+            }
         }
         return results;
     }
 
     public List<Ticket> filterTicketsByStatus(List<Ticket> allTickets, TicketStatus status) {
-        List<Ticket> results = allTickets.stream()
-            .filter(t -> t.getStatus() == status)
-            .collect(Collectors.toList());
-        
-        System.out.println("\n===== TICKETS WITH STATUS: " + status.getDisplayName() + " =====");
-        for (Ticket ticket : results) {
-            System.out.println(ticket.getDisplayInfo());
+        List<Ticket> results = new ArrayList<>();
+        for (Ticket t : allTickets) {
+            if (t.getStatus() == status) {
+                results.add(t);
+            }
         }
         return results;
     }
 
     public List<Ticket> filterTicketsByPriority(List<Ticket> allTickets, Priority priority) {
-        List<Ticket> results = allTickets.stream()
-            .filter(t -> t.getPriority() == priority)
-            .collect(Collectors.toList());
-        
-        System.out.println("\n===== TICKETS WITH PRIORITY: " + priority.getDisplayName() + " =====");
-        for (Ticket ticket : results) {
-            System.out.println(ticket.getDisplayInfo());
+        List<Ticket> results = new ArrayList<>();
+        for (Ticket t : allTickets) {
+            if (t.getPriority() == priority) {
+                results.add(t);
+            }
         }
         return results;
     }
 
-    public void updateTicketStatus(Ticket ticket, TicketStatus status) {
+    // --- ACTION METHODS (Returning Strings instead of Printing) ---
+
+    public String updateTicketStatus(Ticket ticket, TicketStatus status) {
         ticket.updateStatus(status);
-        System.out.println("Ticket " + ticket.getTicketId() + " status updated to: " + status.getDisplayName());
+        return "Success: Ticket " + ticket.getTicketId() + " status updated to " + status.getDisplayName();
     }
 
-    public void addResponse(Ticket ticket, String message) {
+    public String addResponse(Ticket ticket, String message) {
         Message response = new Message(
             "MSG-" + System.currentTimeMillis(),
             ticket.getTicketId(),
@@ -84,34 +71,35 @@ public class Staff extends User {
             message
         );
         ticket.addMessage(response);
-        System.out.println("Response added to ticket " + ticket.getTicketId());
+        return "Success: Response added to ticket " + ticket.getTicketId();
     }
 
-    public void assignTicket(Ticket ticket, Staff targetStaff) {
+    public String assignTicket(Ticket ticket, Staff targetStaff) {
         if (this.staffRole == StaffRole.MANAGER || this.staffRole == StaffRole.TEAM_LEAD) {
             ticket.setAssignedStaffId(targetStaff.getStaffId());
             targetStaff.assignedTickets.add(ticket);
-            System.out.println("Ticket " + ticket.getTicketId() + " assigned to " + targetStaff.getName());
+            return "Success: Ticket " + ticket.getTicketId() + " assigned to " + targetStaff.getName();
         } else {
-            System.out.println("Only managers or team leads can assign tickets.");
+            return "Error: Only managers or team leads can assign tickets.";
         }
     }
 
-    public void takeTicket(Ticket ticket) {
+    public String takeTicket(Ticket ticket) {
         ticket.setAssignedStaffId(this.staffId);
         if (!assignedTickets.contains(ticket)) {
             assignedTickets.add(ticket);
         }
         ticket.updateStatus(TicketStatus.IN_PROGRESS);
-        System.out.println("Ticket " + ticket.getTicketId() + " is now assigned to you.");
+        return "Success: Ticket " + ticket.getTicketId() + " is now assigned to you.";
     }
+
+    
 
     @Override
     public String getUserType() {
         return "Staff - " + staffRole.getDisplayName();
     }
 
-    // Getters and Setters
     public String getStaffId() { return staffId; }
     public StaffRole getStaffRole() { return staffRole; }
     public String getDepartmentId() { return departmentId; }
@@ -126,4 +114,3 @@ public class Staff extends User {
                 staffId, name, staffRole.getDisplayName(), departmentId, assignedTickets.size());
     }
 }
-
