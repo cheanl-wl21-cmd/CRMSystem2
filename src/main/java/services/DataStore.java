@@ -77,12 +77,18 @@ public class DataStore {
         tickets.add(ticket3);
 
         // Create FAQs
-        FAQ.addToDatabase(new FAQ("FAQ-001", "How do I reset my password?", 
-            "Click on 'Forgot Password' on the login page and follow the instructions.", "Account", "ADMIN-1"));
+        FAQ.addToDatabase(new FAQ("FAQ-001", "How do I register an Account?", 
+            "Click on Register Account and follow the steps given.", "Account", "ADMIN-1"));
         FAQ.addToDatabase(new FAQ("FAQ-002", "How do I submit a ticket?", 
             "Log in to your account, go to Support, and click 'New Ticket'.", "Support", "ADMIN-1"));
         FAQ.addToDatabase(new FAQ("FAQ-003", "What are the support hours?", 
             "Our support team is available 24/7.", "General", "ADMIN-1"));
+        FAQ.addToDatabase(new FAQ("FAQ-004", "What is the shop's return policy?", 
+            "You can return any apparel within 30 days of purchase provided the tags are still attached.", "Orders", "ADMIN-1"));
+        FAQ.addToDatabase(new FAQ("FAQ-005", "How can I track my order?", 
+            "Once your order is shipped, a tracking number will be updated in your ticket details.", "Shipping", "ADMIN-1"));
+        FAQ.addToDatabase(new FAQ("FAQ-006", "Do you offer international shipping?", 
+            "Currently, we only ship within Malaysia. We plan to expand to international regions soon.", "Support", "ADMIN-1"));
     }
 
     public String generateTicketId() {
