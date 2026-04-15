@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package models;
 
 import interfaces.Displayable;
@@ -11,6 +8,10 @@ public class Product implements Displayable {
     private String name;
     private String categoryName;
     private double price;
+    
+    public Product(){
+        
+    }
 
     public Product(String productId, String name, String categoryName, double price) {
         this.productId = productId;
@@ -18,6 +19,15 @@ public class Product implements Displayable {
         this.categoryName = categoryName;
         this.price = price;
     }
+    
+    public String getProductId() { return productId; }
+    public String getName() { return name; }
+    public String getCategoryName() { return categoryName; }
+    public double getPrice() { return price; }
+
+    public void setName(String name) { this.name = name; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
+    public void setPrice(double price) { this.price = price; }
 
     public void displayProductInfo() {
         System.out.println("Product ID: " + productId);
@@ -37,13 +47,6 @@ public class Product implements Displayable {
                 name, productId, categoryName, price);
     }
 
-    // Getters and Setters
-    public String getProductId() { return productId; }
-    public String getName() { return name; }
-    public String getCategoryName() { return categoryName; }
-    public double getPrice() { return price; }
-
-    public void setName(String name) { this.name = name; }
-    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
-    public void setPrice(double price) { this.price = price; }
+    
+   
 }

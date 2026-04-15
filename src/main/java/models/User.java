@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package models;
 
 import interfaces.Displayable;
@@ -12,6 +9,10 @@ public abstract class User implements Displayable {
     protected String email;
     protected String password;
     protected boolean isLoggedIn;
+    
+    public User(){
+        
+    }
 
     public User(String userId, String name, String email, String password) {
         this.userId = userId;
@@ -20,6 +21,16 @@ public abstract class User implements Displayable {
         this.password = password;
         this.isLoggedIn = false;
     }
+    
+    
+    public String getUserId() { return userId; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public boolean isLoggedIn() { return isLoggedIn; }
+    
+    public void setName(String name) { this.name = name; }
+    public void setEmail(String email) { this.email = email; }
+    public void setPassword(String password) { this.password = password; }
 
     public boolean login(String email, String password) {
         if (this.email.equals(email) && this.password.equals(password)) {
@@ -45,15 +56,7 @@ public abstract class User implements Displayable {
     // Abstract method for polymorphism
     public abstract String getUserType();
 
-    // Getters and Setters
-    public String getUserId() { return userId; }
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public boolean isLoggedIn() { return isLoggedIn; }
     
-    public void setName(String name) { this.name = name; }
-    public void setEmail(String email) { this.email = email; }
-    public void setPassword(String password) { this.password = password; }
 
     public boolean validatePassword(String password) {
         return this.password.equals(password);

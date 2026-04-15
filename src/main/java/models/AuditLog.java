@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package models;
 
 import interfaces.Displayable;
@@ -17,6 +13,9 @@ public class AuditLog implements Displayable {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    public AuditLog(){
+    }
+    
     public AuditLog(String logId, String actionDone, String adminId) {
         this.logId = logId;
         this.actionDone = actionDone;
@@ -24,20 +23,19 @@ public class AuditLog implements Displayable {
         this.actionBy = adminId;
         this.timestamp = new Date();
     }
-
+    
+    public String getLogId() { return logId; }
+    public String getActionDone() { return actionDone; }
+    public String getActionBy() { return actionBy; }
+    public Date getTimestamp() { return timestamp; }
+    public String getAdminId() { return adminId; }
+    
     public void recordAction(String action) {
         this.actionDone = action;
         this.timestamp = new Date();
     }
 
-    public void displayLogEntry() {
-        System.out.println("[" + DATE_FORMAT.format(timestamp) + "] " + actionBy + ": " + actionDone);
-    }
-
-    @Override
-    public void display() {
-        displayLogEntry();
-    }
+    
 
     @Override
     public String getDisplayInfo() {
@@ -45,10 +43,8 @@ public class AuditLog implements Displayable {
                 logId, actionDone, actionBy, DATE_FORMAT.format(timestamp));
     }
 
-    // Getters
-    public String getLogId() { return logId; }
-    public String getActionDone() { return actionDone; }
-    public String getActionBy() { return actionBy; }
-    public Date getTimestamp() { return timestamp; }
-    public String getAdminId() { return adminId; }
+    @Override
+    public void display() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

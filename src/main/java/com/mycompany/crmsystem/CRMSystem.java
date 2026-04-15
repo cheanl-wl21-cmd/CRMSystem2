@@ -284,7 +284,7 @@ System.out.println("==========================================");
             return;
         }
         
-        ticket.displayTicketDetails();
+        System.out.println(ticket.getTicketDetails());
     }
 
     private static void closeTicket(Customer customer) {
@@ -302,7 +302,7 @@ System.out.println("==========================================");
             return;
         }
 
-        customer.closeTicket(ticketId);
+       System.out.println(customer.closeTicket(ticketId));
     }
 
     private static void giveFeedback(Customer customer) {
@@ -335,7 +335,7 @@ System.out.println("==========================================");
         System.out.print("Comment: ");
         String comment = scanner.nextLine().trim();
 
-        customer.giveFeedback(ticketId, rating, comment);
+        System.out.println(customer.giveFeedback(ticketId, rating, comment));
     }
 
     private static void editProfile(Customer customer) {
@@ -516,7 +516,7 @@ System.out.println("==========================================");
             System.out.println("Ticket not found.");
             return;
         }
-        ticket.displayTicketDetails();
+        System.out.println(ticket.getTicketDetails());
     }
 
     private static void addResponseToTicket(Staff staff) {
@@ -647,7 +647,8 @@ System.out.println("==========================================");
                 viewAllUsers();
                 break;
             case 4:
-                admin.viewAuditLogs();
+               System.out.println("\n===== AUDIT LOGS =====");
+                System.out.println(admin.getAuditLogsAsString());
                 break;
             case 5:
                 addNewStaff(admin);
@@ -783,11 +784,11 @@ System.out.println("==========================================");
         }
     }
 
-    private static void viewDepartments() {
+   private static void viewDepartments() {
         System.out.println("\n--- DEPARTMENTS ---");
         for (Department dept : dataStore.getDepartments()) {
-            dept.display();
-            dept.displayUnsolvedTicketNumber();
+            System.out.println(dept.getDisplayInfo());
+            System.out.println(dept.getUnsolvedTicketNumberString()); // The Waiter prints the new string!
             System.out.println("-".repeat(40));
         }
     }

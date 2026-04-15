@@ -11,6 +11,10 @@ public class Staff extends User {
     private StaffRole staffRole;
     private String departmentId;
     private List<Ticket> assignedTickets;
+    
+    public Staff(){
+        
+    }
 
     public Staff(String userId, String name, String email, String password, StaffRole role, String departmentId) {
         super(userId, name, email, password);
@@ -19,8 +23,16 @@ public class Staff extends User {
         this.departmentId = departmentId;
         this.assignedTickets = new ArrayList<>();
     }
+    
+     public String getStaffId() { return staffId; }
+    public StaffRole getStaffRole() { return staffRole; }
+    public String getDepartmentId() { return departmentId; }
+    public List<Ticket> getAssignedTickets() { return assignedTickets; }
 
-    // --- LIST FILTERING METHODS (No Streams, No Printing) ---
+    public void setStaffRole(StaffRole staffRole) { this.staffRole = staffRole; }
+    public void setDepartmentId(String departmentId) { this.departmentId = departmentId; }
+
+  
 
     public List<Ticket> searchTicketByKeyword(List<Ticket> allTickets, String keyword) {
         List<Ticket> results = new ArrayList<>();
@@ -56,7 +68,7 @@ public class Staff extends User {
         return results;
     }
 
-    // --- ACTION METHODS (Returning Strings instead of Printing) ---
+   
 
     public String updateTicketStatus(Ticket ticket, TicketStatus status) {
         ticket.updateStatus(status);
@@ -100,13 +112,7 @@ public class Staff extends User {
         return "Staff - " + staffRole.getDisplayName();
     }
 
-    public String getStaffId() { return staffId; }
-    public StaffRole getStaffRole() { return staffRole; }
-    public String getDepartmentId() { return departmentId; }
-    public List<Ticket> getAssignedTickets() { return assignedTickets; }
-
-    public void setStaffRole(StaffRole staffRole) { this.staffRole = staffRole; }
-    public void setDepartmentId(String departmentId) { this.departmentId = departmentId; }
+   
 
     @Override
     public String getDisplayInfo() {

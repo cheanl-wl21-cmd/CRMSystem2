@@ -15,6 +15,9 @@ public class Message implements Displayable {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    public Message(){
+        
+    }
     public Message(String messageId, String ticketId, String senderId, String text) {
         this.messageId = messageId;
         this.ticketId = ticketId;
@@ -22,6 +25,16 @@ public class Message implements Displayable {
         this.text = text;
         this.timestamp = new Date();
     }
+    
+  
+    public String getMessageId() { return messageId; }
+    public String getTicketId() { return ticketId; }
+    public String getSenderId() { return senderId; }
+    public String getText() { return text; }
+    public Date getTimestamp() { return timestamp; }
+    public String getDepartmentId() { return departmentId; }
+
+    public void setDepartmentId(String departmentId) { this.departmentId = departmentId; }
 
     public void editText(String newText) {
         this.text = newText;
@@ -42,13 +55,5 @@ public class Message implements Displayable {
         return String.format("Message from %s at %s: %s", senderId, DATE_FORMAT.format(timestamp), text);
     }
 
-    // Getters and Setters
-    public String getMessageId() { return messageId; }
-    public String getTicketId() { return ticketId; }
-    public String getSenderId() { return senderId; }
-    public String getText() { return text; }
-    public Date getTimestamp() { return timestamp; }
-    public String getDepartmentId() { return departmentId; }
-
-    public void setDepartmentId(String departmentId) { this.departmentId = departmentId; }
+   
 }

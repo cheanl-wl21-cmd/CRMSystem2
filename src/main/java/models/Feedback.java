@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package models;
 
 import interfaces.Displayable;
@@ -17,6 +14,9 @@ public class Feedback implements Displayable {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    public Feedback(){
+        
+    }
     public Feedback(String feedbackId, int rating, String comment, String ticketId) {
         this.feedbackId = feedbackId;
         this.rating = Math.max(1, Math.min(5, rating)); // Ensure rating is between 1-5
@@ -24,6 +24,16 @@ public class Feedback implements Displayable {
         this.ticketId = ticketId;
         this.feedbackDate = new Date();
     }
+    
+    
+    public String getFeedbackId() { return feedbackId; }
+    public int getRating() { return rating; }
+    public String getComment() { return comment; }
+    public Date getFeedbackDate() { return feedbackDate; }
+    public String getTicketId() { return ticketId; }
+
+    public void setRating(int rating) { this.rating = Math.max(1, Math.min(5, rating)); }
+    public void setComment(String comment) { this.comment = comment; }
 
     public void submitFeedback() {
         System.out.println("Feedback submitted successfully!");
@@ -46,13 +56,5 @@ public class Feedback implements Displayable {
         return String.format("Feedback ID: %s | Rating: %d/5 | Ticket: %s", feedbackId, rating, ticketId);
     }
 
-    // Getters and Setters
-    public String getFeedbackId() { return feedbackId; }
-    public int getRating() { return rating; }
-    public String getComment() { return comment; }
-    public Date getFeedbackDate() { return feedbackDate; }
-    public String getTicketId() { return ticketId; }
-
-    public void setRating(int rating) { this.rating = Math.max(1, Math.min(5, rating)); }
-    public void setComment(String comment) { this.comment = comment; }
+    
 }

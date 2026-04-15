@@ -1,4 +1,3 @@
-
 package models;
 
 import interfaces.Reportable;
@@ -9,13 +8,18 @@ public class Admin extends User implements Reportable {
     private String adminId;
     private List<AuditLog> auditLogs;
     
-    
+    public Admin(){
+    }
 
     public Admin(String userId, String name, String email, String password) {
         super(userId, name, email, password);
         this.adminId = "ADMIN-" + userId;
         this.auditLogs = new ArrayList<>();
     }
+    
+ 
+    public String getAdminId() { return adminId; }
+    public List<AuditLog> getAuditLogs() { return auditLogs; }
 
     public Report generateMonthlyReport(int month, int year, List<Ticket> allTickets) {
         Report report = new Report("RPT-" + System.currentTimeMillis(), month, year);
@@ -24,11 +28,18 @@ public class Admin extends User implements Reportable {
         return report;
     }
 
-    public void viewAuditLogs() {
-        System.out.println("\n===== AUDIT LOGS =====");
-        for (AuditLog log : auditLogs) {
-            log.displayLogEntry();
+   
+    public String getAuditLogsAsString() {
+        if (auditLogs.isEmpty()) {
+            return "No audit logs found.";
         }
+        
+        StringBuilder sb = new StringBuilder();
+        for (AuditLog log : auditLogs) {
+       
+            sb.append(log.getDisplayInfo()).append("\n"); 
+        }
+        return sb.toString();
     }
 
     public void logAction(String action) {
@@ -40,16 +51,21 @@ public class Admin extends User implements Reportable {
         auditLogs.add(log);
     }
 
+   
     public void addUser(User user, List<User> userList) {
         userList.add(user);
         logAction("Added new user: " + user.getName() + " (" + user.getUserType() + ")");
-        System.out.println("User added successfully.");
     }
 
+   
     public void removeUser(String userId, List<User> userList) {
-        userList.removeIf(u -> u.getUserId().equals(userId));
-        logAction("Removed user with ID: " + userId);
-        System.out.println("User removed successfully.");
+        for (int i = 0; i < userList.size(); i++) {
+            if (userList.get(i).getUserId().equals(userId)) {
+                userList.remove(i);
+                logAction("Removed user with ID: " + userId);
+                break; 
+            }
+        }
     }
 
     @Override
@@ -68,12 +84,11 @@ public class Admin extends User implements Reportable {
 
     @Override
     public void displayReport() {
+       
         System.out.println(generateReport());
     }
 
-    // Getters
-    public String getAdminId() { return adminId; }
-    public List<AuditLog> getAuditLogs() { return auditLogs; }
+    
 
     @Override
     public String getDisplayInfo() {
@@ -81,4 +96,3 @@ public class Admin extends User implements Reportable {
                 adminId, name, email, auditLogs.size());
     }
 }
-
