@@ -206,51 +206,72 @@ System.out.println("==========================================");
     }
 
     private static void submitNewTicket(Customer customer) {
-        System.out.println("\n--- SUBMIT NEW TICKET ---");
-        
-        // Show products
-        System.out.println("\nAvailable Products:");
-        List<Product> products = dataStore.getProducts();
-        for (int i = 0; i < products.size(); i++) {
-            System.out.println((i + 1) + ". " + products.get(i).getName() + " (" + products.get(i).getProductId() + ")");
-        }
-        
-        System.out.print("\nSelect product number: ");
-        int productChoice = getIntInput();
-        if (productChoice < 1 || productChoice > products.size()) {
-            System.out.println("Invalid product selection.");
-            return;
-        }
-        String productId = products.get(productChoice - 1).getProductId();
-
-        System.out.print("Description of issue: ");
-        String description = scanner.nextLine().trim();
-        if (description.isEmpty()) {
-            System.out.println("Description cannot be empty.");
-            return;
-        }
-
-        System.out.println("\nPriority Level:");
-        System.out.println("1. Low");
-        System.out.println("2. Medium");
-        System.out.println("3. High");
-        System.out.print("Select priority: ");
-        int priorityChoice = getIntInput();
-        
-        Priority priority;
-        switch (priorityChoice) {
-            case 1: priority = Priority.LOW; break;
-            case 2: priority = Priority.MEDIUM; break;
-            case 3: priority = Priority.HIGH; break;
-            default:
-                System.out.println("Invalid priority. Defaulting to LOW.");
-                priority = Priority.LOW;
-        }
-
-        Ticket ticket = ticketService.createTicket(customer, productId, description, priority);
-        System.out.println("\nTicket submitted successfully!");
-        System.out.println("Your ticket ID: " + ticket.getTicketId());
+    System.out.println("\n--- SUBMIT NEW TICKET ---");
+    
+    //Show products
+    System.out.println("\nAvailable Products:");
+    List<Product> products = dataStore.getProducts();
+    for (int i = 0; i < products.size(); i++) {
+        System.out.println((i + 1) + ". " + products.get(i).getName() + " (" + products.get(i).getProductId() + ")");
     }
+    
+    System.out.print("\nSelect product number: ");
+    int productChoice = getIntInput();
+    if (productChoice < 1 || productChoice > products.size()) {
+        System.out.println("Invalid product selection.");
+        return;
+    }
+    //productId
+    String productId = products.get(productChoice - 1).getProductId();
+
+    System.out.print("Description of issue: ");
+    //description
+    String description = scanner.nextLine().trim();
+    if (description.isEmpty()) {
+        System.out.println("Description cannot be empty.");
+        return;
+    }
+
+    System.out.println("\nPriority Level:");
+    System.out.println("1. Low 2. Medium 3. High");
+    System.out.print("Select priority: ");
+    int priorityChoice = getIntInput();
+    
+    //priority
+    Priority priority;
+    switch (priorityChoice) {
+        case 1: priority = Priority.LOW; break;
+        case 2: priority = Priority.MEDIUM; break;
+        case 3: priority = Priority.HIGH; break;
+        default:
+            System.out.println("Invalid priority. Defaulting to LOW.");
+            priority = Priority.LOW;
+    }
+
+    // Create the ticket (DEFINING ticket)
+    Ticket ticket = ticketService.createTicket(customer, productId, description, priority);
+
+    //handle Attachment
+    System.out.print("\nDo you want to add an attachment? (y/n): ");
+    String attachChoice = scanner.nextLine().trim().toLowerCase();
+    
+    if (attachChoice.equals("y")) {
+        System.out.print("Enter file name: ");
+        String fileName = scanner.nextLine().trim();
+        
+       
+        Attachment attachment = new Attachment("ATT-" + System.currentTimeMillis(), fileName, 1.0);
+        
+        if (attachment.uploadFile()) {
+            ticket.addAttachment(attachment); 
+                    
+            System.out.println("File attached successfully!");
+        }
+    }
+
+    System.out.println("\nTicket submitted successfully!");
+    System.out.println("Your ticket ID: " + ticket.getTicketId());
+}
 
     private static void viewCustomerTickets(Customer customer) {
         System.out.println("\n--- MY TICKETS ---");
