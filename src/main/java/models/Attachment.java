@@ -37,11 +37,7 @@ public class Attachment implements Displayable {
         return "Downloading file: " + fileName + " from " + filePath + "...\nDownload complete!";
     }
 
-    @Override
-    public void display() {
-        System.out.println(getDisplayInfo());
-    }
-
+   
     @Override
     public String getDisplayInfo() {
         return String.format("Attachment: %s | Size: %.2f MB | Path: %s", fileName, fileSizeMB, filePath);

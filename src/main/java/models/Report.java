@@ -16,15 +16,12 @@ public class Report implements Displayable, Reportable {
     private int totalTicketsSubmitted;
     private int totalTicketsResolved;
     private double averageResponseTime; // in hours
-    
-    
-    public String getReportId() { return reportId; }
-    public Date getReportDate() { return reportDate; }
-    public int getTotalTicketsSubmitted() { return totalTicketsSubmitted; }
-    public int getTotalTicketsResolved() { return totalTicketsResolved; }
-    public double getAverageResponseTime() { return averageResponseTime; }
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    
+    public Report(){
+        
+    }
 
     public Report(String reportId, int month, int year) {
         this.reportId = reportId;
@@ -32,8 +29,15 @@ public class Report implements Displayable, Reportable {
         this.reportYear = year;
         this.reportDate = new Date();
     }
+    
+    public String getReportId() { return reportId; }
+    public Date getReportDate() { return reportDate; }
+    public int getTotalTicketsSubmitted() { return totalTicketsSubmitted; }
+    public int getTotalTicketsResolved() { return totalTicketsResolved; }
+    public double getAverageResponseTime() { return averageResponseTime; }
 
-    public void generateReport(List<Ticket> allTickets) {
+   
+    public String generateReport(List<Ticket> allTickets) {
         Calendar calendar = Calendar.getInstance();
         
         totalTicketsSubmitted = 0;
@@ -62,7 +66,7 @@ public class Report implements Displayable, Reportable {
             averageResponseTime = (totalResponseTime / responsesCount) / (1000.0 * 60 * 60); // Convert to hours
         }
 
-        System.out.println("Report generated successfully.");
+        return "Report generated successfully.";
     }
 
     @Override
@@ -88,20 +92,13 @@ public class Report implements Displayable, Reportable {
 
     @Override
     public void displayReport() {
-        System.out.println(generateReport());
+       
     }
 
-    @Override
-    public void display() {
-        displayReport();
-    }
-
+    
     @Override
     public String getDisplayInfo() {
         return String.format("Report: %s | Period: %d/%d | Submitted: %d | Resolved: %d",
                 reportId, reportMonth, reportYear, totalTicketsSubmitted, totalTicketsResolved);
     }
-
-   
 }
-

@@ -1,4 +1,3 @@
-
 package models;
 
 import interfaces.Displayable;
@@ -29,24 +28,18 @@ public class Product implements Displayable {
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
     public void setPrice(double price) { this.price = price; }
 
-    public void displayProductInfo() {
-        System.out.println("Product ID: " + productId);
-        System.out.println("Name: " + name);
-        System.out.println("Category: " + categoryName);
-        System.out.println("Price: $" + String.format("%.2f", price));
+    
+    public String getProductDetailsString() {
+        return "Product ID: " + productId + "\n" +
+               "Name: " + name + "\n" +
+               "Category: " + categoryName + "\n" +
+               "Price: $" + String.format("%.2f", price);
     }
 
-    @Override
-    public void display() {
-        displayProductInfo();
-    }
-
+    
     @Override
     public String getDisplayInfo() {
         return String.format("Product: %s | ID: %s | Category: %s | Price: $%.2f",
                 name, productId, categoryName, price);
     }
-
-    
-   
 }

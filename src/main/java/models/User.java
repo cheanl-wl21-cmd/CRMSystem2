@@ -1,4 +1,3 @@
-
 package models;
 
 import interfaces.Displayable;
@@ -22,7 +21,6 @@ public abstract class User implements Displayable {
         this.isLoggedIn = false;
     }
     
-    
     public String getUserId() { return userId; }
     public String getName() { return name; }
     public String getEmail() { return email; }
@@ -35,36 +33,26 @@ public abstract class User implements Displayable {
     public boolean login(String email, String password) {
         if (this.email.equals(email) && this.password.equals(password)) {
             this.isLoggedIn = true;
-            System.out.println("Login successful! Welcome, " + name);
             return true;
         }
-        System.out.println("Invalid credentials!");
         return false;
     }
 
-    public void logout() {
+    public String logout() {
         this.isLoggedIn = false;
-        System.out.println(name + " has logged out.");
+        return name + " has logged out.";
     }
 
-    public void updateProfile(String name, String email) {
+    public String updateProfile(String name, String email) {
         this.name = name;
         this.email = email;
-        System.out.println("Profile updated successfully.");
+        return "Profile updated successfully.";
     }
 
-    // Abstract method for polymorphism
     public abstract String getUserType();
-
-    
 
     public boolean validatePassword(String password) {
         return this.password.equals(password);
-    }
-
-    @Override
-    public void display() {
-        System.out.println(getDisplayInfo());
     }
 
     @Override
@@ -73,4 +61,3 @@ public abstract class User implements Displayable {
                 userId, name, email, getUserType());
     }
 }
-

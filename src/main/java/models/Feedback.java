@@ -1,4 +1,3 @@
-
 package models;
 
 import interfaces.Displayable;
@@ -25,7 +24,6 @@ public class Feedback implements Displayable {
         this.feedbackDate = new Date();
     }
     
-    
     public String getFeedbackId() { return feedbackId; }
     public int getRating() { return rating; }
     public String getComment() { return comment; }
@@ -35,26 +33,21 @@ public class Feedback implements Displayable {
     public void setRating(int rating) { this.rating = Math.max(1, Math.min(5, rating)); }
     public void setComment(String comment) { this.comment = comment; }
 
-    public void submitFeedback() {
-        System.out.println("Feedback submitted successfully!");
-        displayFeedbackDetails();
+   
+    public String submitFeedback() {
+        return "Feedback submitted successfully!\n" + getFeedbackDetailsString();
     }
 
-    public void displayFeedbackDetails() {
-        System.out.println("Rating: " + "★".repeat(rating) + "☆".repeat(5 - rating) + " (" + rating + "/5)");
-        System.out.println("Comment: " + comment);
-        System.out.println("Date: " + DATE_FORMAT.format(feedbackDate));
+   
+    public String getFeedbackDetailsString() {
+        return "Rating: " + "★".repeat(rating) + "☆".repeat(5 - rating) + " (" + rating + "/5)\n" +
+               "Comment: " + comment + "\n" +
+               "Date: " + DATE_FORMAT.format(feedbackDate);
     }
 
-    @Override
-    public void display() {
-        displayFeedbackDetails();
-    }
-
+    
     @Override
     public String getDisplayInfo() {
         return String.format("Feedback ID: %s | Rating: %d/5 | Ticket: %s", feedbackId, rating, ticketId);
     }
-
-    
 }

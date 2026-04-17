@@ -13,6 +13,8 @@ public class DataStore {
     private List<Ticket> tickets;
     private List<Department> departments;
     private List<Product> products;
+    private List<FAQ> faqs; // 1. Added FAQ List
+    
     private int ticketCounter;
     private int userCounter;
 
@@ -21,6 +23,8 @@ public class DataStore {
         tickets = new ArrayList<>();
         departments = new ArrayList<>();
         products = new ArrayList<>();
+        faqs = new ArrayList<>(); // Initialize the FAQ list
+        
         ticketCounter = 1000;
         userCounter = 100;
         initializeSampleData();
@@ -76,18 +80,18 @@ public class DataStore {
         tickets.add(ticket2);
         tickets.add(ticket3);
 
-        // Create FAQs
-        FAQ.addToDatabase(new FAQ("FAQ-001", "How do I register an Account?", 
+        // 2. Fixed FAQs - Add directly to the DataStore's list
+        faqs.add(new FAQ("FAQ-001", "How do I register an Account?", 
             "Click on Register Account and follow the steps given.", "Account", "ADMIN-1"));
-        FAQ.addToDatabase(new FAQ("FAQ-002", "How do I submit a ticket?", 
+        faqs.add(new FAQ("FAQ-002", "How do I submit a ticket?", 
             "Log in to your account, go to Support, and click 'New Ticket'.", "Support", "ADMIN-1"));
-        FAQ.addToDatabase(new FAQ("FAQ-003", "What are the support hours?", 
+        faqs.add(new FAQ("FAQ-003", "What are the support hours?", 
             "Our support team is available 24/7.", "General", "ADMIN-1"));
-        FAQ.addToDatabase(new FAQ("FAQ-004", "What is the shop's return policy?", 
+        faqs.add(new FAQ("FAQ-004", "What is the shop's return policy?", 
             "You can return any apparel within 30 days of purchase provided the tags are still attached.", "Orders", "ADMIN-1"));
-        FAQ.addToDatabase(new FAQ("FAQ-005", "How can I track my order?", 
+        faqs.add(new FAQ("FAQ-005", "How can I track my order?", 
             "Once your order is shipped, a tracking number will be updated in your ticket details.", "Shipping", "ADMIN-1"));
-        FAQ.addToDatabase(new FAQ("FAQ-006", "Do you offer international shipping?", 
+        faqs.add(new FAQ("FAQ-006", "Do you offer international shipping?", 
             "Currently, we only ship within Malaysia. We plan to expand to international regions soon.", "Support", "ADMIN-1"));
     }
 
@@ -98,14 +102,17 @@ public class DataStore {
     public String generateUserId() {
         return String.valueOf(++userCounter);
     }
+    
     // Getters
     public List<User> getUsers() { return users; }
     public List<Ticket> getTickets() { return tickets; }
     public List<Department> getDepartments() { return departments; }
     public List<Product> getProducts() { return products; }
+    public List<FAQ> getFaqs() { return faqs; } // 3. Added FAQ Getter
 
     public void addUser(User user) { users.add(user); }
     public void addTicket(Ticket ticket) { tickets.add(ticket); }
+    public void addFaq(FAQ faq) { faqs.add(faq); }
 
     public User findUserByEmail(String email) {
         for (User u : users) {
@@ -115,6 +122,7 @@ public class DataStore {
         }
         return null; 
     }
+    
     public Ticket findTicketById(String ticketId) {
         for (Ticket t : tickets) {
             if (t.getTicketId().equalsIgnoreCase(ticketId)) {
@@ -123,6 +131,7 @@ public class DataStore {
         }
         return null;
     }
+    
     public Staff findStaffById(String staffId) {
         for (User u : users) {
             if (u instanceof Staff) { //filter out the normal customers
@@ -134,6 +143,7 @@ public class DataStore {
         }
         return null;
     }
+    
     public List<Ticket> getTicketsByCustomer(String custId) {
         List<Ticket> result = new ArrayList<>();
         for (Ticket t : tickets) {
@@ -144,4 +154,3 @@ public class DataStore {
         return result;
     }
 }
-

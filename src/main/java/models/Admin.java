@@ -82,11 +82,7 @@ public class Admin extends User implements Reportable {
         return sb.toString();
     }
 
-    @Override
-    public void displayReport() {
-       
-        System.out.println(generateReport());
-    }
+   
 
     
 
@@ -94,5 +90,10 @@ public class Admin extends User implements Reportable {
     public String getDisplayInfo() {
         return String.format("Admin ID: %s | Name: %s | Email: %s | Audit Logs: %d",
                 adminId, name, email, auditLogs.size());
+    }
+
+    @Override
+    public void displayReport() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -24,15 +24,13 @@ public class Staff extends User {
         this.assignedTickets = new ArrayList<>();
     }
     
-     public String getStaffId() { return staffId; }
+    public String getStaffId() { return staffId; }
     public StaffRole getStaffRole() { return staffRole; }
     public String getDepartmentId() { return departmentId; }
     public List<Ticket> getAssignedTickets() { return assignedTickets; }
 
     public void setStaffRole(StaffRole staffRole) { this.staffRole = staffRole; }
     public void setDepartmentId(String departmentId) { this.departmentId = departmentId; }
-
-  
 
     public List<Ticket> searchTicketByKeyword(List<Ticket> allTickets, String keyword) {
         List<Ticket> results = new ArrayList<>();
@@ -67,8 +65,6 @@ public class Staff extends User {
         }
         return results;
     }
-
-   
 
     public String updateTicketStatus(Ticket ticket, TicketStatus status) {
         ticket.updateStatus(status);
@@ -105,14 +101,10 @@ public class Staff extends User {
         return "Success: Ticket " + ticket.getTicketId() + " is now assigned to you.";
     }
 
-    
-
     @Override
     public String getUserType() {
         return "Staff - " + staffRole.getDisplayName();
     }
-
-   
 
     @Override
     public String getDisplayInfo() {

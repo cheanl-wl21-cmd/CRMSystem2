@@ -58,8 +58,6 @@ public class Ticket implements Displayable {
     public void setDateClosed(Date dateClosed) { this.dateClosed = dateClosed; }
     public void setFeedback(Feedback feedback) { this.feedback = feedback; }
 
-
-    
     public void addMessage(Message msg) {
         messages.add(msg);
     }
@@ -71,12 +69,10 @@ public class Ticket implements Displayable {
         }
     }
 
-    
     public void addAttachment(Attachment att) {
         attachments.add(att);
     }
 
-    
     public String getTicketDetails() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n").append("=".repeat(50)).append("\n");
@@ -98,7 +94,6 @@ public class Ticket implements Displayable {
         if (!messages.isEmpty()) {
             sb.append("\n--- Messages ---\n");
             for (Message msg : messages) {
-               
                 sb.append(msg.getDisplayInfo()).append("\n"); 
             }
         }
@@ -112,7 +107,6 @@ public class Ticket implements Displayable {
         
         if (feedback != null) {
             sb.append("\n--- Feedback ---\n");
-            
             sb.append(feedback.getDisplayInfo()).append("\n"); 
         }
         sb.append("=".repeat(50));
@@ -120,7 +114,6 @@ public class Ticket implements Displayable {
         return sb.toString();
     }
 
-    
     @Override
     public String getDisplayInfo() {
         return String.format("[%s] %s | Priority: %s | Status: %s | Submitted: %s",
@@ -129,10 +122,5 @@ public class Ticket implements Displayable {
                 priority.getDisplayName(), 
                 status.getDisplayName(),
                 DATE_FORMAT.format(dateSubmitted));
-    }
-    
-    @Override
-    public void display() {
-        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }

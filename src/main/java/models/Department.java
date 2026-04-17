@@ -28,16 +28,13 @@ public class Department implements Displayable {
 
     public void setDepartmentName(String departmentName) { this.departmentName = departmentName; }
 
-   
     public String routeTicket(Ticket ticket) {
         departmentTickets.add(ticket);
         return "Ticket " + ticket.getTicketId() + " routed to " + departmentName;
     }
 
-    
     public String assignTicketToStaff(Ticket ticket, Staff staff) {
         if (staffMembers.contains(staff)) {
-            
             staff.takeTicket(ticket); 
             return "Success: Ticket assigned to " + staff.getName() + " in " + departmentName;
         } else {
@@ -45,7 +42,6 @@ public class Department implements Displayable {
         }
     }
 
-   
     public String getUnsolvedTicketNumberString() {
         int count = 0;
         for (Ticket t : departmentTickets) {
@@ -66,16 +62,9 @@ public class Department implements Displayable {
         staffMembers.remove(staff);
     }
 
-    
-
     @Override
     public String getDisplayInfo() {
         return String.format("Department: %s | ID: %s | Staff Count: %d | Tickets: %d",
                 departmentName, departmentId, staffMembers.size(), departmentTickets.size());
-    }
-
-    @Override
-    public void display() {
-        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }

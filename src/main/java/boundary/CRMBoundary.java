@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package boundary;
+
 import enums.Priority;
 import enums.StaffRole;
 import enums.TicketStatus;
@@ -130,15 +127,17 @@ public class CRMBoundary {
 
     private static void viewFAQs() {
         System.out.println("\n==========================================");
-System.out.println("        FREQUENTLY ASKED QUESTIONS        ");
-System.out.println("==========================================");
+        System.out.println("        FREQUENTLY ASKED QUESTIONS        ");
+        System.out.println("==========================================");
         
-        List<FAQ> faqs = FAQ.getAllFAQs();
+        // ARCHITECTURE FIX: The UI now asks DataStore for FAQs, not the Model!
+        List<FAQ> faqs = dataStore.getFaqs(); 
         if (faqs.isEmpty()) {
             System.out.println("No FAQs available.");
         } else {
             for (FAQ faq : faqs) {
-                faq.displayFAQ();
+                // ARCHITECTURE FIX: Printing the String returned by the Model
+                System.out.println(faq.getFaqDetailsString());
                 System.out.println("-".repeat(40));
             }
         }
@@ -146,11 +145,12 @@ System.out.println("==========================================");
 
     private static void viewProducts() {
         System.out.println("\n==========================================");
-System.out.println("        OUR PRODUCTS        ");
-System.out.println("==========================================");
+        System.out.println("                OUR PRODUCTS              ");
+        System.out.println("==========================================");
         
         for (Product product : dataStore.getProducts()) {
-            product.displayProductInfo();
+            // ARCHITECTURE FIX: Printing the String returned by the Model
+            System.out.println(product.getProductDetailsString());
             System.out.println("-".repeat(40));
         }
     }
@@ -384,7 +384,7 @@ System.out.println("==========================================");
     //staff menu
     private static void showStaffMenu(Staff staff) {
         System.out.println("\n+------------------------------------------+");
-        System.out.println("|             STAFF DASHBOARD              |");
+        System.out.println("|              STAFF DASHBOARD             |");
         System.out.printf("|  Welcome, %-30s |%n", staff.getName());
         System.out.printf("|  Role: %-33s |%n", staff.getStaffRole().getDisplayName());
         System.out.println("+------------------------------------------+");
@@ -507,7 +507,12 @@ System.out.println("==========================================");
                 System.out.println("Invalid choice.");
                 return;
         }
-        staff.filterTicketsByStatus(ticketService.getAllTickets(), status);
+        // ARCHITECTURE FIX: The filter method returns a List! You need to loop and print it.
+        List<Ticket> filtered = staff.filterTicketsByStatus(ticketService.getAllTickets(), status);
+        System.out.println("\n--- FILTERED TICKETS ---");
+        for(Ticket t : filtered) {
+            System.out.println(t.getDisplayInfo());
+        }
     }
 
     private static void filterByPriority(Staff staff) {
@@ -527,7 +532,12 @@ System.out.println("==========================================");
                 System.out.println("Invalid choice.");
                 return;
         }
-        staff.filterTicketsByPriority(ticketService.getAllTickets(), priority);
+        // ARCHITECTURE FIX: The filter method returns a List! You need to loop and print it.
+        List<Ticket> filtered = staff.filterTicketsByPriority(ticketService.getAllTickets(), priority);
+        System.out.println("\n--- FILTERED TICKETS ---");
+        for(Ticket t : filtered) {
+            System.out.println(t.getDisplayInfo());
+        }
     }
 
     private static void viewTicketDetailsStaff() {
@@ -559,7 +569,7 @@ System.out.println("==========================================");
             return;
         }
 
-        staff.addResponse(ticket, response);
+        System.out.println(staff.addResponse(ticket, response));
     }
 
     private static void updateTicketStatus(Staff staff) {
@@ -590,7 +600,7 @@ System.out.println("==========================================");
                 System.out.println("Invalid choice.");
                 return;
         }
-        staff.updateTicketStatus(ticket, status);
+        System.out.println(staff.updateTicketStatus(ticket, status));
     }
 
     private static void takeTicket(Staff staff) {
@@ -603,7 +613,7 @@ System.out.println("==========================================");
             return;
         }
 
-        staff.takeTicket(ticket);
+        System.out.println(staff.takeTicket(ticket));
     }
 
     private static void assignTicketToStaff(Staff manager) {
@@ -637,13 +647,13 @@ System.out.println("==========================================");
             return;
         }
 
-        manager.assignTicket(ticket, targetStaff);
+        System.out.println(manager.assignTicket(ticket, targetStaff));
     }
 
     // ==================== ADMIN MENU ====================
     private static void showAdminMenu(Admin admin) {
         System.out.println("\n+------------------------------------------+");
-        System.out.println("|             ADMIN DASHBOARD              |");
+        System.out.println("|              ADMIN DASHBOARD             |");
         System.out.printf("|  Welcome, %-30s |%n", admin.getName());
         System.out.println("+------------------------------------------+");
         System.out.printf("|  %-38s  |%n", "1. Generate Monthly Report");
@@ -708,7 +718,8 @@ System.out.println("==========================================");
         }
 
         Report report = admin.generateMonthlyReport(month, year, ticketService.getAllTickets());
-        report.displayReport();
+        // ARCHITECTURE FIX: Print the string returned by the model!
+        System.out.println(report.generateReport());
     }
 
     private static void viewAllTicketsAdmin() {
@@ -729,7 +740,8 @@ System.out.println("==========================================");
     private static void viewAllUsers() {
         System.out.println("\n--- ALL USERS ---");
         for (User user : dataStore.getUsers()) {
-            user.display();
+            // ARCHITECTURE FIX: Print the string instead of calling void display()
+            System.out.println(user.getDisplayInfo());
         }
     }
 
@@ -801,7 +813,10 @@ System.out.println("==========================================");
             String category = scanner.nextLine().trim();
             
             FAQ faq = new FAQ("FAQ-" + System.currentTimeMillis(), question, answer, category, admin.getAdminId());
-            FAQ.addToDatabase(faq);
+            
+            // ARCHITECTURE FIX: Add FAQ directly to the DataStore
+            dataStore.getFaqs().add(faq); 
+            
             admin.logAction("Added new FAQ: " + question);
             System.out.println("FAQ added successfully!");
         }
@@ -845,6 +860,3 @@ System.out.println("==========================================");
 }
 
 }
-
-
-

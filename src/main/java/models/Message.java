@@ -1,4 +1,3 @@
-
 package models;
 
 import interfaces.Displayable;
@@ -26,7 +25,6 @@ public class Message implements Displayable {
         this.timestamp = new Date();
     }
     
-  
     public String getMessageId() { return messageId; }
     public String getTicketId() { return ticketId; }
     public String getSenderId() { return senderId; }
@@ -36,24 +34,20 @@ public class Message implements Displayable {
 
     public void setDepartmentId(String departmentId) { this.departmentId = departmentId; }
 
-    public void editText(String newText) {
+    
+    public String editText(String newText) {
         this.text = newText;
-        System.out.println("Message edited successfully.");
+        return "Message edited successfully.";
     }
 
-    public void displayMessage() {
-        System.out.println("  [" + DATE_FORMAT.format(timestamp) + "] " + senderId + ": " + text);
+    
+    public String getFormattedMessageString() {
+        return "  [" + DATE_FORMAT.format(timestamp) + "] " + senderId + ": " + text;
     }
 
-    @Override
-    public void display() {
-        displayMessage();
-    }
-
+    
     @Override
     public String getDisplayInfo() {
         return String.format("Message from %s at %s: %s", senderId, DATE_FORMAT.format(timestamp), text);
     }
-
-   
 }

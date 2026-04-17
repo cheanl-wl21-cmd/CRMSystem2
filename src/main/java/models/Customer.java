@@ -22,13 +22,11 @@ public class Customer extends User {
         this.tickets = new ArrayList<>();
     }
     
-      
     public String getCustId() { return custId; }
     public String getAddress() { return address; }
     public List<Ticket> getTickets() { return tickets; }
     
     public void setAddress(String address) { this.address = address; }
-
 
     public String register() {
         return "Customer " + name + " registered successfully with ID: " + custId;
@@ -50,13 +48,11 @@ public class Customer extends User {
         return null;
     }
 
-   
     public String closeTicket(String ticketId) {
         for (Ticket ticket : tickets) {
             if (ticket.getTicketId().equals(ticketId)) {
                 if (ticket.getStatus() == TicketStatus.RESOLVED) {
                     ticket.updateStatus(TicketStatus.CLOSED);
-                   
                     return "Success: Ticket " + ticketId + " has been closed.";
                 } else {
                     return "Error: Ticket must be resolved before closing.";
@@ -66,7 +62,6 @@ public class Customer extends User {
         return "Error: Ticket not found!";
     }
 
-   
     public String editTicket(String ticketId, String description, Priority priority) {
         for (Ticket ticket : tickets) {
             if (ticket.getTicketId().equals(ticketId)) {
@@ -82,7 +77,6 @@ public class Customer extends User {
         return "Error: Ticket not found!";
     }
 
-    
     public String giveFeedback(String ticketId, int rating, String comment) {
         for (Ticket ticket : tickets) {
             if (ticket.getTicketId().equals(ticketId) && ticket.getStatus() == TicketStatus.CLOSED) {
@@ -112,7 +106,6 @@ public class Customer extends User {
         return "Customer";
     }
 
- 
     @Override
     public String getDisplayInfo() {
         return String.format("Customer ID: %s | Name: %s | Email: %s | Address: %s | Total Tickets: %d",
