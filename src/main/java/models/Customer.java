@@ -10,23 +10,27 @@ public class Customer extends User {
     private String custId;
     private String address;
     private List<Ticket> tickets;
+    private String profilePic = "default.png";
     
     public Customer(){
         
     }
 
-    public Customer(String userId, String name, String email, String password, String address) {
+    public Customer(String userId, String name, String email, String password, String address,String profilePic) {
         super(userId, name, email, password);
         this.custId = "CUST-" + userId;
         this.address = address;
         this.tickets = new ArrayList<>();
+        this.profilePic=profilePic;
     }
     
     public String getCustId() { return custId; }
     public String getAddress() { return address; }
     public List<Ticket> getTickets() { return tickets; }
+   public String getProfilePic() { return profilePic; }
     
     public void setAddress(String address) { this.address = address; }
+    public void setProfilePic(String profilePic){  this.profilePic=profilePic;}
 
     public String register() {
         return "Customer " + name + " registered successfully with ID: " + custId;
@@ -41,7 +45,7 @@ public class Customer extends User {
 
     public Ticket viewTicket(String ticketId) {
         for (Ticket ticket : tickets) {
-            if (ticket.getTicketId().equals(ticketId)) {
+            if (ticket.getTicketId().equalsIgnoreCase(ticketId)) {
                 return ticket; 
             }
         }
@@ -50,7 +54,7 @@ public class Customer extends User {
 
     public String closeTicket(String ticketId) {
         for (Ticket ticket : tickets) {
-            if (ticket.getTicketId().equals(ticketId)) {
+            if (ticket.getTicketId().equalsIgnoreCase(ticketId)) {
                 if (ticket.getStatus() == TicketStatus.RESOLVED) {
                     ticket.updateStatus(TicketStatus.CLOSED);
                     return "Success: Ticket " + ticketId + " has been closed.";
@@ -64,7 +68,7 @@ public class Customer extends User {
 
     public String editTicket(String ticketId, String description, Priority priority) {
         for (Ticket ticket : tickets) {
-            if (ticket.getTicketId().equals(ticketId)) {
+            if (ticket.getTicketId().equalsIgnoreCase(ticketId)) {
                 if (ticket.getStatus() == TicketStatus.OPEN) {
                     ticket.setDescription(description);
                     ticket.setPriority(priority);
@@ -79,7 +83,7 @@ public class Customer extends User {
 
     public String giveFeedback(String ticketId, int rating, String comment) {
         for (Ticket ticket : tickets) {
-            if (ticket.getTicketId().equals(ticketId) && ticket.getStatus() == TicketStatus.CLOSED) {
+            if (ticket.getTicketId().equalsIgnoreCase(ticketId) && ticket.getStatus() == TicketStatus.CLOSED) {
                 Feedback feedback = new Feedback(
                     "FB-" + System.currentTimeMillis(),
                     rating,
@@ -110,5 +114,10 @@ public class Customer extends User {
     public String getDisplayInfo() {
         return String.format("Customer ID: %s | Name: %s | Email: %s | Address: %s | Total Tickets: %d",
                 custId, name, email, address, tickets.size());
+    }
+    
+   @Override
+    public String toCSV() {
+        return "Customer," + userId + "," + name + "," + email + "," + password + "," + address+"," + profilePic;
     }
 }

@@ -60,4 +60,5 @@ public abstract class User implements Displayable {
         return String.format("User ID: %s | Name: %s | Email: %s | Type: %s",
                 userId, name, email, getUserType());
     }
+    public abstract String toCSV();
 }

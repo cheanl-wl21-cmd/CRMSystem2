@@ -17,6 +17,11 @@ public class CRMBoundary {
     private static DataStore dataStore = DataStore.getInstance();
     
     public void startApp(){
+        
+        dataStore.loadUsersFromFile();
+        dataStore.loadTicketsFromFile();
+        dataStore.loadFAQsFromFile();
+        dataStore.loadAuditLogsFromFile();
         boolean running = true;
         while (running){
     System.out.println("\n+--------------------------------------------------------+");
@@ -71,6 +76,12 @@ public class CRMBoundary {
                 viewProducts();
                 break;
             case 0:
+                dataStore.saveUsersToFile();
+                dataStore.saveTicketsToFile();
+                dataStore.saveFAQsToFile();
+                dataStore.saveAuditLogsToFile();
+                
+                System.out.println("Logging out...");
                 return false;
             default:
                 System.out.println("Invalid choice. Please try again.");
@@ -130,13 +141,13 @@ public class CRMBoundary {
         System.out.println("        FREQUENTLY ASKED QUESTIONS        ");
         System.out.println("==========================================");
         
-        // ARCHITECTURE FIX: The UI now asks DataStore for FAQs, not the Model!
+        
         List<FAQ> faqs = dataStore.getFaqs(); 
         if (faqs.isEmpty()) {
             System.out.println("No FAQs available.");
         } else {
             for (FAQ faq : faqs) {
-                // ARCHITECTURE FIX: Printing the String returned by the Model
+                
                 System.out.println(faq.getFaqDetailsString());
                 System.out.println("-".repeat(40));
             }
@@ -149,7 +160,7 @@ public class CRMBoundary {
         System.out.println("==========================================");
         
         for (Product product : dataStore.getProducts()) {
-            // ARCHITECTURE FIX: Printing the String returned by the Model
+           
             System.out.println(product.getProductDetailsString());
             System.out.println("-".repeat(40));
         }
@@ -234,40 +245,38 @@ public class CRMBoundary {
         return;
     }
 
-    System.out.println("\nPriority Level:");
-    System.out.println("1. Low 2. Medium 3. High");
-    System.out.print("Select priority: ");
-    int priorityChoice = getIntInput();
     
-    //priority
-    Priority priority;
-    switch (priorityChoice) {
-        case 1: priority = Priority.LOW; break;
-        case 2: priority = Priority.MEDIUM; break;
-        case 3: priority = Priority.HIGH; break;
-        default:
-            System.out.println("Invalid priority. Defaulting to LOW.");
-            priority = Priority.LOW;
-    }
 
     // Create the ticket (DEFINING ticket)
-    Ticket ticket = ticketService.createTicket(customer, productId, description, priority);
+    Ticket ticket = ticketService.createTicket(customer, productId, description, Priority.LOW);
 
     //handle Attachment
     System.out.print("\nDo you want to add an attachment? (y/n): ");
     String attachChoice = scanner.nextLine().trim().toLowerCase();
     
     if (attachChoice.equals("y")) {
-        System.out.print("Enter file name: ");
+        System.out.println("Please place the file inside your main project folder.");
+        System.out.print("Enter the exact file name (e.g., error.txt or screenshot.png): ");
         String fileName = scanner.nextLine().trim();
         
-       
-        Attachment attachment = new Attachment("ATT-" + System.currentTimeMillis(), fileName, 1.0);
+        // Use Java File class to physically look for the file on your computer
+        java.io.File file = new java.io.File(fileName);
         
-        if (attachment.uploadFile()) {
+        if (file.exists() && !file.isDirectory()) {
+            // Calculate the REAL file size in Megabytes
+            double fileSizeMB = file.length() / (1024.0 * 1024.0);
+            
+            // Round it to 2 decimal places (e.g., 1.45 MB)
+            fileSizeMB = Math.round(fileSizeMB * 100.0) / 100.0;
+            if (fileSizeMB == 0.0) fileSizeMB = 0.01; // Show at least 0.01 for tiny files
+            
+            Attachment attachment = new Attachment("ATT-" + System.currentTimeMillis(), fileName, fileSizeMB);
             ticket.addAttachment(attachment); 
                     
-            System.out.println("File attached successfully!");
+            System.out.println("Success! File '" + fileName + "' attached perfectly! (Size: " + fileSizeMB + " MB)");
+        } else {
+            System.out.println("Error: File not found! The system could not locate '" + fileName + "' in the project folder.");
+            System.out.println("Proceeding without attachment.");
         }
     }
 
@@ -369,16 +378,81 @@ public class CRMBoundary {
         
         System.out.print("\nNew Name (press Enter to keep current): ");
         String name = scanner.nextLine().trim();
+        if (!name.isEmpty()) customer.setName(name);
+
         System.out.print("New Email (press Enter to keep current): ");
         String email = scanner.nextLine().trim();
+        if (!email.isEmpty()) {
+            //validate email
+            if (authService.isValid(email)) {
+                customer.setEmail(email);
+            } else {
+                System.out.println("--> Invalid email format. Keeping old email: " + customer.getEmail());
+            }
+        }
+
         System.out.print("New Address (press Enter to keep current): ");
         String address = scanner.nextLine().trim();
-
-        if (!name.isEmpty()) customer.setName(name);
-        if (!email.isEmpty()) customer.setEmail(email);
         if (!address.isEmpty()) customer.setAddress(address);
 
-        System.out.println("Profile updated successfully!");
+        
+        System.out.print("\nDo you want to change your password? (y/n): ");
+        String changePass = scanner.nextLine().trim().toLowerCase();
+        
+        if (changePass.equals("y")) {
+            System.out.print("Enter CURRENT password: ");
+            String currentPass = scanner.nextLine().trim();
+            
+            // Verify old password 
+            if (customer.validatePassword(currentPass)) {
+                System.out.print("Enter NEW password: ");
+                String newPass = scanner.nextLine().trim();
+                
+                if (authService.isValidPassword(newPass)) {
+                    customer.setPassword(newPass);
+                    System.out.println("--> Password successfully changed!");
+                } else {
+                    System.out.println("--> Password must be 8-15 characters. Password not changed.");
+                }
+            } else {
+                System.out.println("--> Incorrect current password! Password not changed.");
+            }
+        }
+        //  Profile Picture change
+        System.out.print("\nDo you want to update your profile picture? (y/n): ");
+        String changePic = scanner.nextLine().trim().toLowerCase();
+        
+        if (changePic.equals("y")) {
+            System.out.println("Please place the image in your main project folder.");
+            System.out.print("Enter the exact file name (e.g., avatar.png): ");
+            String fileName = scanner.nextLine().trim();
+            
+            java.io.File file = new java.io.File(fileName);
+            
+            // Check if the file physically exists or not
+            if (file.exists() && !file.isDirectory()) {
+                
+                // Check the file format in lowercase
+                String lowerCaseName = fileName.toLowerCase();
+                
+                if (lowerCaseName.endsWith(".png") || lowerCaseName.endsWith(".jpg") || lowerCaseName.endsWith(".jpeg")) {
+                    
+                 
+                    
+                    System.out.println("--> Success! Profile picture updated to '" + fileName + "'.");
+                } else {
+                    System.out.println("--> Error: Invalid format! The system only accepts .png, .jpg, or .jpeg files.");
+                }
+                
+            } else {
+                System.out.println("--> Error: File not found! Could not locate '" + fileName + "'.");
+            }
+        }
+
+        System.out.println("\nProfile updated successfully!");
+        
+        // store in file.csv
+        dataStore.saveUsersToFile(); 
     }
 
     //staff menu
@@ -440,7 +514,7 @@ public class CRMBoundary {
                 addResponseToTicket(staff);
                 break;
             case 8:
-                updateTicketStatus(staff);
+                updateTicketPriority(staff);
                 break;
             case 9:
                 takeTicket(staff);
@@ -507,7 +581,7 @@ public class CRMBoundary {
                 System.out.println("Invalid choice.");
                 return;
         }
-        // ARCHITECTURE FIX: The filter method returns a List! You need to loop and print it.
+      
         List<Ticket> filtered = staff.filterTicketsByStatus(ticketService.getAllTickets(), status);
         System.out.println("\n--- FILTERED TICKETS ---");
         for(Ticket t : filtered) {
@@ -532,7 +606,7 @@ public class CRMBoundary {
                 System.out.println("Invalid choice.");
                 return;
         }
-        // ARCHITECTURE FIX: The filter method returns a List! You need to loop and print it.
+        
         List<Ticket> filtered = staff.filterTicketsByPriority(ticketService.getAllTickets(), priority);
         System.out.println("\n--- FILTERED TICKETS ---");
         for(Ticket t : filtered) {
@@ -572,7 +646,7 @@ public class CRMBoundary {
         System.out.println(staff.addResponse(ticket, response));
     }
 
-    private static void updateTicketStatus(Staff staff) {
+    private static void updateTicketPriority(Staff staff) {
         System.out.print("\nEnter Ticket ID: ");
         String ticketId = scanner.nextLine().trim();
         
@@ -582,25 +656,27 @@ public class CRMBoundary {
             return;
         }
 
-        System.out.println("\nSelect New Status:");
-        System.out.println("1. Open");
-        System.out.println("2. In Progress");
-        System.out.println("3. Pending");
-        System.out.println("4. Resolved");
+        System.out.println("Current Priority: " + ticket.getPriority().getDisplayName());
+        System.out.println("\nSelect New Priority:");
+        System.out.println("1. Low");
+        System.out.println("2. Medium");
+        System.out.println("3. High");
         System.out.print("Choice: ");
         
         int choice = getIntInput();
-        TicketStatus status;
+        Priority newPriority;
         switch (choice) {
-            case 1: status = TicketStatus.OPEN; break;
-            case 2: status = TicketStatus.IN_PROGRESS; break;
-            case 3: status = TicketStatus.PENDING; break;
-            case 4: status = TicketStatus.RESOLVED; break;
+            case 1: newPriority = Priority.LOW; break;
+            case 2: newPriority = Priority.MEDIUM; break;
+            case 3: newPriority = Priority.HIGH; break;
             default:
                 System.out.println("Invalid choice.");
                 return;
         }
-        System.out.println(staff.updateTicketStatus(ticket, status));
+        
+        // Update the priority using the setter you already have in Ticket.java!
+        ticket.setPriority(newPriority);
+        System.out.println("Success! Ticket priority upgraded to " + newPriority.name());
     }
 
     private static void takeTicket(Staff staff) {
@@ -747,12 +823,49 @@ public class CRMBoundary {
 
     private static void addNewStaff(Admin admin) {
         System.out.println("\n--- ADD NEW STAFF ---");
+        String name;
+    while (true) {
         System.out.print("Full Name: ");
-        String name = scanner.nextLine().trim();
+        name = scanner.nextLine().trim();
+        
+        if (name.isEmpty()) {
+            System.out.println("--> Error: Name cannot be empty! Please enter a valid name.");
+        } else {
+            break; 
+        }
+    }
+        String email;
+    while (true) {
         System.out.print("Email: ");
-        String email = scanner.nextLine().trim();
+        email = scanner.nextLine().trim();
+        
+        
+        if (!authService.isValid(email)) {
+            System.out.println("--> Error: Invalid email format! Please include '@' and a domain.");
+        } 
+        
+        else if (dataStore.findUserByEmail(email) != null) {
+            System.out.println("--> Error: This email is already registered to another user!");
+        } 
+       
+        else {
+            break; 
+        }
+    }
+
+   
+    String password;
+    while (true) {
         System.out.print("Password: ");
-        String password = scanner.nextLine().trim();
+        password = scanner.nextLine().trim();
+        
+        
+        if (!authService.isValidPassword(password)) {
+            System.out.println("--> Error: Password must be between 8 and 15 characters long.");
+        } else {
+            break; 
+        }
+    }
         
         System.out.println("\nSelect Role:");
         System.out.println("1. Support Agent");
@@ -771,6 +884,8 @@ public class CRMBoundary {
             default:
                 System.out.println("Invalid role. Defaulting to Support Agent.");
                 role = StaffRole.SUPPORT_AGENT;
+                
+        
         }
 
         System.out.println("\nAvailable Departments:");
@@ -812,9 +927,8 @@ public class CRMBoundary {
             System.out.print("Category: ");
             String category = scanner.nextLine().trim();
             
-            FAQ faq = new FAQ("FAQ-" + System.currentTimeMillis(), question, answer, category, admin.getAdminId());
+           FAQ faq = new FAQ(question, answer);
             
-            // ARCHITECTURE FIX: Add FAQ directly to the DataStore
             dataStore.getFaqs().add(faq); 
             
             admin.logAction("Added new FAQ: " + question);

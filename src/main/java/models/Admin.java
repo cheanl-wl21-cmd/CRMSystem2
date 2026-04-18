@@ -94,6 +94,11 @@ public class Admin extends User implements Reportable {
 
     @Override
     public void displayReport() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+    
+    @Override
+    public String toCSV() {
+        return "Admin," + userId + "," + name + "," + email + "," + password;
     }
 }

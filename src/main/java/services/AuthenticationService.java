@@ -69,7 +69,7 @@ public class AuthenticationService {
 
         
         String userId = dataStore.generateUserId();
-        Customer customer = new Customer(userId, name, email, password, address);
+        Customer customer = new Customer(userId, name, email, password, address, "default.png");
         customer.register();
         dataStore.addUser(customer);
         return customer;

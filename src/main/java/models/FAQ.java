@@ -8,18 +8,21 @@ public class FAQ implements Displayable {
     private String answer;
     private String category;
     private String adminId;
+    
 
     public FAQ(){
         
     }
 
-    public FAQ(String faqId, String question, String answer, String category, String adminId) {
-        this.faqId = faqId;
-        this.question = question;
-        this.answer = answer;
-        this.category = category;
-        this.adminId = adminId;
-    }
+    
+      public FAQ(String question, String answer) {
+    this.faqId = "FAQ-" + System.currentTimeMillis(); // Generate a random ID
+    this.question = question;
+    this.answer = answer;
+    this.category = "General";
+    this.adminId = "ADMIN-001";
+}
+    
     
     public String getFaqId() { return faqId; }
     public String getQuestion() { return question; }
@@ -36,6 +39,10 @@ public class FAQ implements Displayable {
         return "\nQ: " + question + "\n" +
                "A: " + answer + "\n" +
                "Category: " + category;
+    }
+    
+    public String toTXT() {
+        return question + "|" + answer;
     }
 
     

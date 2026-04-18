@@ -57,6 +57,8 @@ public class Ticket implements Displayable {
     public void setPriority(Priority priority) { this.priority = priority; }
     public void setDateClosed(Date dateClosed) { this.dateClosed = dateClosed; }
     public void setFeedback(Feedback feedback) { this.feedback = feedback; }
+    public void setDateSubmitted(Date date) { this.dateSubmitted = date; }
+    
 
     public void addMessage(Message msg) {
         messages.add(msg);
@@ -113,6 +115,21 @@ public class Ticket implements Displayable {
         
         return sb.toString();
     }
+    // save ticket in txt.
+    public String toTXT() {
+        
+        String staff = assignedStaffId == null ? "null" : assignedStaffId;
+        
+        //remove the desciption have the simbol |
+        String safeDescription = description.replace("|", " ");
+        
+        
+        return ticketId + "|" + productId + "|" + customerId + "|" + staff + "|" + 
+               safeDescription + "|" + priority.name() + "|" + status.name() + "|" + dateSubmitted.getTime();
+    }
+
+   
+    
 
     @Override
     public String getDisplayInfo() {
