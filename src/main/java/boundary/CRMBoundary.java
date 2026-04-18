@@ -514,12 +514,15 @@ public class CRMBoundary {
                 addResponseToTicket(staff);
                 break;
             case 8:
-                updateTicketPriority(staff);
+                updateTicketStatusStaff(staff);
                 break;
             case 9:
-                takeTicket(staff);
+                updateTicketPriority(staff);
                 break;
             case 10:
+                takeTicket(staff);
+                break;
+            case 11:
                 if (staff.getStaffRole() == StaffRole.MANAGER || staff.getStaffRole() == StaffRole.TEAM_LEAD) {
                     assignTicketToStaff(staff);
                 } else {
@@ -739,6 +742,7 @@ public class CRMBoundary {
         System.out.printf("|  %-38s  |%n", "5. Add New Staff");
         System.out.printf("|  %-38s  |%n", "6. Manage FAQs");
         System.out.printf("|  %-38s  |%n", "7. View Departments");
+        System.out.printf("|  %-38s  |%n", "8. Update Ticket Status");
         System.out.printf("|  %-38s  |%n", "0. Logout");
         System.out.println("+------------------------------------------+");
         System.out.print("Enter your choice: ");
@@ -767,6 +771,9 @@ public class CRMBoundary {
                 break;
             case 7:
                 viewDepartments();
+                break;
+            case 8:
+                updateTicketStatusAdmin(admin);
                 break;
             case 0:
                 authService.logout();
@@ -907,6 +914,82 @@ public class CRMBoundary {
         
         System.out.println("Staff member added successfully!");
         System.out.println("Staff ID: " + newStaff.getStaffId());
+    }
+    
+    public static void updateTicketStatusStaff(Staff staff){
+        System.out.print("\nEnter Ticket ID: ");
+        String ticketId = scanner.nextLine().trim();
+        
+        Ticket ticket = ticketService.getTicketById(ticketId);
+        if (ticket == null){
+            System.out.println("Ticket not found.");
+            return;
+        }
+        System.out.println("Current Status: " + ticket.getStatus().getDisplayName());
+        System.out.println("\nSelect New Status:");
+        System.out.println("1. Open");
+        System.out.println("2. In Progress");
+        System.out.println("3. Pending");
+        System.out.println("4. Resolved");
+        System.out.println("5. Closed");
+        System.out.print("Choice: ");
+        
+        int choice = getIntInput();
+        TicketStatus newStatus;
+        switch(choice){
+            case 1: newStatus = TicketStatus.OPEN; break;
+            case 2: newStatus = TicketStatus.IN_PROGRESS; break;
+            case 3: newStatus = TicketStatus.PENDING; break;
+            case 4: newStatus = TicketStatus.RESOLVED; break;
+            case 5: newStatus = TicketStatus.CLOSED; break;
+            default:
+                System.out.println("Invalid choice. Status not changed.");
+                return;
+        }
+        
+        ticketService.updateTicketStatus(ticketId, newStatus);
+        System.out.println("Successfully updated Ticket " + ticketId + " to " + newStatus.getDisplayName() );
+                
+        
+        
+    }
+    
+    public static void updateTicketStatusAdmin(Admin admin){
+        System.out.print("\nEnter Ticket ID: ");
+        String ticketId = scanner.nextLine().trim();
+        
+        Ticket ticket = ticketService.getTicketById(ticketId);
+        if (ticket == null){
+            System.out.println("Ticket not found.");
+            return;
+        }
+        System.out.println("Current Status: " + ticket.getStatus().getDisplayName());
+        System.out.println("\nSelect New Status:");
+        System.out.println("1. Open");
+        System.out.println("2. In Progress");
+        System.out.println("3. Pending");
+        System.out.println("4. Resolved");
+        System.out.println("5. Closed");
+        System.out.print("Choice: ");
+        
+        int choice = getIntInput();
+        TicketStatus newStatus;
+        switch(choice){
+            case 1: newStatus = TicketStatus.OPEN; break;
+            case 2: newStatus = TicketStatus.IN_PROGRESS; break;
+            case 3: newStatus = TicketStatus.PENDING; break;
+            case 4: newStatus = TicketStatus.RESOLVED; break;
+            case 5: newStatus = TicketStatus.CLOSED; break;
+            default:
+                System.out.println("Invalid choice. Status not changed.");
+                return;
+        }
+        
+        ticketService.updateTicketStatus(ticketId, newStatus);
+        System.out.println("Successfully updated Ticket " + ticketId + " to " + newStatus.getDisplayName() );
+                
+        
+        
     }
 
     private static void manageFAQs(Admin admin) {
