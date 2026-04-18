@@ -82,9 +82,16 @@ public class DataStore {
         // Create sample customers
         
         // Create products
-        products.add(new Product("PROD-001", "CRM Basic", "Software", 99.99));
-        products.add(new Product("PROD-002", "CRM Pro", "Software", 199.99));
-        products.add(new Product("PROD-003", "CRM Enterprise", "Software", 499.99));
+        products.add(new Product("PROD-001", "Classic White T-Shirt", "Tops", 19.99));
+        products.add(new Product("PROD-002", "Slim Fit Blue Jeans", "Bottoms", 49.99));
+        products.add(new Product("PROD-003", "Oversized Black Hoodie", "Outerwear", 39.99));
+        products.add(new Product("PROD-004", "Floral Summer Dress", "Dresses", 34.50));
+        products.add(new Product("PROD-005", "Leather Bomber Jacket", "Outerwear", 89.99));
+        products.add(new Product("PROD-006", "Khaki Chino Pants", "Bottoms", 44.99));
+        products.add(new Product("PROD-007", "Striped Cotton Polo", "Tops", 29.99));
+        products.add(new Product("PROD-008", "Wool Blend Sweater", "Knitwear", 54.00));
+        products.add(new Product("PROD-009", "Denim Mini Skirt", "Bottoms", 24.99));
+        products.add(new Product("PROD-010", "Athletic Joggers", "Activewear", 32.99));
 
        
 
