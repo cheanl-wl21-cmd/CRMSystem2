@@ -1,33 +1,31 @@
 package boundary;
 
-import enums.Priority;
-import enums.StaffRole;
-import enums.TicketStatus;
 import models.*;
 import services.*;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class CRMBoundary {
-    private static Scanner scanner = new Scanner(System.in);
-    private static AuthenticationService authService = new AuthenticationService();
-    private static TicketService ticketService = new TicketService();
-    private static ReportService reportService = new ReportService();
-    private static DataStore dataStore = DataStore.getInstance();
+    private Scanner scanner = new Scanner(System.in);
+    private AuthenticationService authService = new AuthenticationService();
+    private TicketService ticketService = new TicketService();
+    private DataStore dataStore = DataStore.getInstance();
+    
+    // Wire up the new sub-boundaries!
+    private CustomerBoundary customerBoundary = new CustomerBoundary(scanner, authService, ticketService);
+    private StaffBoundary staffBoundary = new StaffBoundary(scanner, authService, ticketService);
+    private AdminBoundary adminBoundary = new AdminBoundary(scanner, authService, ticketService);
     
     public void startApp(){
-        
         dataStore.loadUsersFromFile();
         dataStore.loadTicketsFromFile();
         dataStore.loadFAQsFromFile();
         dataStore.loadAuditLogsFromFile();
         boolean running = true;
-        while (running){
-    System.out.println("\n+--------------------------------------------------------+");
-    System.out.println("|WELCOME TO ONLINE APPAREL SHOP CUSTOMER RELATION SYSTEM |");
-    System.out.println("+--------------------------------------------------------+");
         
+        System.out.println("\n+--------------------------------------------------------+");
+        System.out.println("|WELCOME TO ONLINE APPAREL SHOP CUSTOMER RELATION SYSTEM |");
+        System.out.println("+--------------------------------------------------------+");
         
         while (running) {
             if (!authService.isLoggedIn()) {
@@ -35,52 +33,43 @@ public class CRMBoundary {
             } else {
                 User currentUser = authService.getCurrentUser();
                 if (currentUser instanceof Admin) {
-                    showAdminMenu((Admin) currentUser);
+                    adminBoundary.showAdminMenu((Admin) currentUser);
                 } else if (currentUser instanceof Staff) {
-                    showStaffMenu((Staff) currentUser);
+                    staffBoundary.showStaffMenu((Staff) currentUser);
                 } else if (currentUser instanceof Customer) {
-                    showCustomerMenu((Customer) currentUser);
+                    customerBoundary.showCustomerMenu((Customer) currentUser);
                 }
             }
         }
         
         System.out.println("\nThank you for using CRM System. Goodbye!");
         scanner.close();
-    }}
+    }
 
     private boolean showMainMenu() {
-    System.out.println("\n+---------------------------------------+");
-    System.out.println("|               MAIN MENU               |");
-    System.out.println("+---------------------------------------+");
-    System.out.printf("|  %-35s  |%n", "1. Login");
-    System.out.printf("|  %-35s  |%n", "2. Register (Customer)");
-    System.out.printf("|  %-35s  |%n", "3. View FAQs");
-    System.out.printf("|  %-35s  |%n", "4. View Products");
-    System.out.printf("|  %-35s  |%n", "0. Exit");
-    System.out.println("+---------------------------------------+");
+        System.out.println("\n+---------------------------------------+");
+        System.out.println("|               MAIN MENU               |");
+        System.out.println("+---------------------------------------+");
+        System.out.printf("|  %-35s  |%n", "1. Login");
+        System.out.printf("|  %-35s  |%n", "2. Register (Customer)");
+        System.out.printf("|  %-35s  |%n", "3. View FAQs");
+        System.out.printf("|  %-35s  |%n", "4. View Products");
+        System.out.printf("|  %-35s  |%n", "0. Exit");
+        System.out.println("+---------------------------------------+");
         System.out.print("Enter your choice: ");
 
-        int choice = getIntInput();
+        int choice = Utility.getIntInput();
         
         switch (choice) {
-            case 1:
-                handleLogin();
-                break;
-            case 2:
-                handleRegistration();
-                break;
-            case 3:
-                viewFAQs();
-                break;
-            case 4:
-                viewProducts();
-                break;
+            case 1: handleLogin(); break;
+            case 2: handleRegistration(); break;
+            case 3: viewFAQs(); break;
+            case 4: viewProducts(); break;
             case 0:
                 dataStore.saveUsersToFile();
                 dataStore.saveTicketsToFile();
                 dataStore.saveFAQsToFile();
                 dataStore.saveAuditLogsToFile();
-                
                 System.out.println("Logging out...");
                 return false;
             default:
@@ -89,7 +78,7 @@ public class CRMBoundary {
         return true;
     }
 
-    private static void handleLogin() {
+    private void handleLogin() {
         System.out.println("\n--- LOGIN ---");
         System.out.print("Email: ");
         String email = scanner.nextLine().trim();
@@ -102,7 +91,7 @@ public class CRMBoundary {
         }
     }
 
-    private static void handleRegistration() {
+    private void handleRegistration() {
         System.out.println("\n--- CUSTOMER REGISTRATION ---");
         System.out.print("Full Name: ");
         String name = scanner.nextLine().trim();
@@ -119,12 +108,10 @@ public class CRMBoundary {
             System.out.println("All fields are required!");
             return;
         }
-        
         if (!authService.isValid(email)) {
             System.out.println("Email format is invalid!");
             return;
         }
-        
         if (!authService.isValidPassword(password)) {
             System.out.println("Password format is invalid! Should be at least 8 - 15 number or alphabet");
             return;
@@ -133,927 +120,32 @@ public class CRMBoundary {
         Customer customer = authService.registerCustomer(name, email, password, address);
         if (customer != null) {
             System.out.println("Registration successful! You can now login.");
+            dataStore.saveUsersToFile(); 
         }
     }
 
-    private static void viewFAQs() {
+    private void viewFAQs() {
         System.out.println("\n==========================================");
         System.out.println("        FREQUENTLY ASKED QUESTIONS        ");
         System.out.println("==========================================");
-        
-        
         List<FAQ> faqs = dataStore.getFaqs(); 
         if (faqs.isEmpty()) {
             System.out.println("No FAQs available.");
         } else {
             for (FAQ faq : faqs) {
-                
                 System.out.println(faq.getFaqDetailsString());
                 System.out.println("-".repeat(40));
             }
         }
     }
 
-    private static void viewProducts() {
+    private void viewProducts() {
         System.out.println("\n==========================================");
         System.out.println("                OUR PRODUCTS              ");
         System.out.println("==========================================");
-        
         for (Product product : dataStore.getProducts()) {
-           
             System.out.println(product.getProductDetailsString());
             System.out.println("-".repeat(40));
         }
     }
-
-    // ==================== CUSTOMER MENU ====================
-    private static void showCustomerMenu(Customer customer) {
-        System.out.println("\n+------------------------------------------+");
-        System.out.println("|            CUSTOMER DASHBOARD            |");
-        System.out.printf("|  Welcome, %-30s |%n", customer.getName());
-        System.out.println("+------------------------------------------+");
-        System.out.printf("|  %-38s  |%n", "1. Submit New Ticket");
-        System.out.printf("|  %-38s  |%n", "2. View My Tickets");
-        System.out.printf("|  %-38s  |%n", "3. View Ticket Details");
-        System.out.printf("|  %-38s  |%n", "4. Close Ticket");
-        System.out.printf("|  %-38s  |%n", "5. Give Feedback");
-        System.out.printf("|  %-38s  |%n", "6. Edit Profile");
-        System.out.printf("|  %-38s  |%n", "7. View FAQs");
-        System.out.printf("|  %-38s  |%n", "0. Logout");
-        System.out.println("+------------------------------------------+");
-        System.out.print("Enter your choice: ");
-
-        int choice = getIntInput();
-
-        switch (choice) {
-            case 1:
-                submitNewTicket(customer);
-                break;
-            case 2:
-                viewCustomerTickets(customer);
-                break;
-            case 3:
-                viewTicketDetails(customer);
-                break;
-            case 4:
-                closeTicket(customer);
-                break;
-            case 5:
-                giveFeedback(customer);
-                break;
-            case 6:
-                editProfile(customer);
-                break;
-            case 7:
-                viewFAQs();
-                break;
-            case 0:
-                authService.logout();
-                break;
-            default:
-                System.out.println("Invalid choice.");
-        }
-        if (choice !=0){
-            pauseAndClear();
-        }
-    }
-
-    private static void submitNewTicket(Customer customer) {
-    System.out.println("\n--- SUBMIT NEW TICKET ---");
-    
-    //Show products
-    System.out.println("\nAvailable Products:");
-    List<Product> products = dataStore.getProducts();
-    for (int i = 0; i < products.size(); i++) {
-        System.out.println((i + 1) + ". " + products.get(i).getName() + " (" + products.get(i).getProductId() + ")");
-    }
-    
-    System.out.print("\nSelect product number: ");
-    int productChoice = getIntInput();
-    if (productChoice < 1 || productChoice > products.size()) {
-        System.out.println("Invalid product selection.");
-        return;
-    }
-    //productId
-    String productId = products.get(productChoice - 1).getProductId();
-
-    System.out.print("Description of issue: ");
-    //description
-    String description = scanner.nextLine().trim();
-    if (description.isEmpty()) {
-        System.out.println("Description cannot be empty.");
-        return;
-    }
-
-    
-
-    // Create the ticket (DEFINING ticket)
-    Ticket ticket = ticketService.createTicket(customer, productId, description, Priority.LOW);
-
-    //handle Attachment
-    System.out.print("\nDo you want to add an attachment? (y/n): ");
-    String attachChoice = scanner.nextLine().trim().toLowerCase();
-    
-    if (attachChoice.equals("y")) {
-        System.out.println("Please place the file inside your main project folder.");
-        System.out.print("Enter the exact file name (e.g., error.txt or screenshot.png): ");
-        String fileName = scanner.nextLine().trim();
-        
-        // Use Java File class to physically look for the file on your computer
-        java.io.File file = new java.io.File(fileName);
-        
-        if (file.exists() && !file.isDirectory()) {
-            // Calculate the REAL file size in Megabytes
-            double fileSizeMB = file.length() / (1024.0 * 1024.0);
-            
-            // Round it to 2 decimal places (e.g., 1.45 MB)
-            fileSizeMB = Math.round(fileSizeMB * 100.0) / 100.0;
-            if (fileSizeMB == 0.0) fileSizeMB = 0.01; // Show at least 0.01 for tiny files
-            
-            Attachment attachment = new Attachment("ATT-" + System.currentTimeMillis(), fileName, fileSizeMB);
-            ticket.addAttachment(attachment); 
-                    
-            System.out.println("Success! File '" + fileName + "' attached perfectly! (Size: " + fileSizeMB + " MB)");
-        } else {
-            System.out.println("Error: File not found! The system could not locate '" + fileName + "' in the project folder.");
-            System.out.println("Proceeding without attachment.");
-        }
-    }
-
-    System.out.println("\nTicket submitted successfully!");
-    System.out.println("Your ticket ID: " + ticket.getTicketId());
-}
-
-    private static void viewCustomerTickets(Customer customer) {
-        System.out.println("\n--- MY TICKETS ---");
-        List<Ticket> tickets = ticketService.getTicketsByCustomerId(customer.getCustId());
-        
-        if (tickets.isEmpty()) {
-            System.out.println("You have no tickets.");
-            return;
-        }
-
-        System.out.println("-".repeat(80));
-        for (Ticket ticket : tickets) {
-            System.out.println(ticket.getDisplayInfo());
-        }
-        System.out.println("-".repeat(80));
-        System.out.println("Total: " + tickets.size() + " ticket(s)");
-    }
-
-    private static void viewTicketDetails(Customer customer) {
-        System.out.print("\nEnter Ticket ID: ");
-        String ticketId = scanner.nextLine().trim();
-        
-        Ticket ticket = ticketService.getTicketById(ticketId);
-        if (ticket == null) {
-            System.out.println("Ticket not found.");
-            return;
-        }
-        
-        if (!ticket.getCustomerId().equals(customer.getCustId())) {
-            System.out.println("You can only view your own tickets.");
-            return;
-        }
-        
-        System.out.println(ticket.getTicketDetails());
-    }
-
-    private static void closeTicket(Customer customer) {
-        System.out.print("\nEnter Ticket ID to close: ");
-        String ticketId = scanner.nextLine().trim();
-        
-        Ticket ticket = ticketService.getTicketById(ticketId);
-        if (ticket == null) {
-            System.out.println("Ticket not found.");
-            return;
-        }
-        
-        if (!ticket.getCustomerId().equals(customer.getCustId())) {
-            System.out.println("You can only close your own tickets.");
-            return;
-        }
-
-       System.out.println(customer.closeTicket(ticketId));
-    }
-
-    private static void giveFeedback(Customer customer) {
-        System.out.print("\nEnter Ticket ID: ");
-        String ticketId = scanner.nextLine().trim();
-        
-        Ticket ticket = ticketService.getTicketById(ticketId);
-        if (ticket == null || !ticket.getCustomerId().equals(customer.getCustId())) {
-            System.out.println("Ticket not found or not yours.");
-            return;
-        }
-
-        if (ticket.getStatus() != TicketStatus.CLOSED) {
-            System.out.println("You can only give feedback for closed tickets.");
-            return;
-        }
-
-        if (ticket.getFeedback() != null) {
-            System.out.println("Feedback already submitted for this ticket.");
-            return;
-        }
-
-        System.out.print("Rating (1-5): ");
-        int rating = getIntInput();
-        if (rating < 1 || rating > 5) {
-            System.out.println("Rating must be between 1 and 5.");
-            return;
-        }
-
-        System.out.print("Comment: ");
-        String comment = scanner.nextLine().trim();
-
-        System.out.println(customer.giveFeedback(ticketId, rating, comment));
-    }
-
-    private static void editProfile(Customer customer) {
-        System.out.println("\n--- EDIT PROFILE ---");
-        System.out.println("Current Name: " + customer.getName());
-        System.out.println("Current Email: " + customer.getEmail());
-        System.out.println("Current Address: " + customer.getAddress());
-        
-        System.out.print("\nNew Name (press Enter to keep current): ");
-        String name = scanner.nextLine().trim();
-        if (!name.isEmpty()) customer.setName(name);
-
-        System.out.print("New Email (press Enter to keep current): ");
-        String email = scanner.nextLine().trim();
-        if (!email.isEmpty()) {
-            //validate email
-            if (authService.isValid(email)) {
-                customer.setEmail(email);
-            } else {
-                System.out.println("--> Invalid email format. Keeping old email: " + customer.getEmail());
-            }
-        }
-
-        System.out.print("New Address (press Enter to keep current): ");
-        String address = scanner.nextLine().trim();
-        if (!address.isEmpty()) customer.setAddress(address);
-
-        
-        System.out.print("\nDo you want to change your password? (y/n): ");
-        String changePass = scanner.nextLine().trim().toLowerCase();
-        
-        if (changePass.equals("y")) {
-            System.out.print("Enter CURRENT password: ");
-            String currentPass = scanner.nextLine().trim();
-            
-            // Verify old password 
-            if (customer.validatePassword(currentPass)) {
-                System.out.print("Enter NEW password: ");
-                String newPass = scanner.nextLine().trim();
-                
-                if (authService.isValidPassword(newPass)) {
-                    customer.setPassword(newPass);
-                    System.out.println("--> Password successfully changed!");
-                } else {
-                    System.out.println("--> Password must be 8-15 characters. Password not changed.");
-                }
-            } else {
-                System.out.println("--> Incorrect current password! Password not changed.");
-            }
-        }
-        //  Profile Picture change
-        System.out.print("\nDo you want to update your profile picture? (y/n): ");
-        String changePic = scanner.nextLine().trim().toLowerCase();
-        
-        if (changePic.equals("y")) {
-            System.out.println("Please place the image in your main project folder.");
-            System.out.print("Enter the exact file name (e.g., avatar.png): ");
-            String fileName = scanner.nextLine().trim();
-            
-            java.io.File file = new java.io.File(fileName);
-            
-            // Check if the file physically exists or not
-            if (file.exists() && !file.isDirectory()) {
-                
-                // Check the file format in lowercase
-                String lowerCaseName = fileName.toLowerCase();
-                
-                if (lowerCaseName.endsWith(".png") || lowerCaseName.endsWith(".jpg") || lowerCaseName.endsWith(".jpeg")) {
-                    
-                 
-                    
-                    System.out.println("--> Success! Profile picture updated to '" + fileName + "'.");
-                } else {
-                    System.out.println("--> Error: Invalid format! The system only accepts .png, .jpg, or .jpeg files.");
-                }
-                
-            } else {
-                System.out.println("--> Error: File not found! Could not locate '" + fileName + "'.");
-            }
-        }
-
-        System.out.println("\nProfile updated successfully!");
-        
-        // store in file.csv
-        dataStore.saveUsersToFile(); 
-    }
-
-    //staff menu
-    private static void showStaffMenu(Staff staff) {
-        System.out.println("\n+------------------------------------------+");
-        System.out.println("|              STAFF DASHBOARD             |");
-        System.out.printf("|  Welcome, %-30s |%n", staff.getName());
-        System.out.printf("|  Role: %-33s |%n", staff.getStaffRole().getDisplayName());
-        System.out.println("+------------------------------------------+");
-        System.out.printf("|  %-38s  |%n", "1. View All Tickets");
-        System.out.printf("|  %-38s  |%n", "2. View My Assigned Tickets");
-        System.out.printf("|  %-38s  |%n", "3. Search Tickets");
-        System.out.printf("|  %-38s  |%n", "4. Filter by Status");
-        System.out.printf("|  %-38s  |%n", "5. Filter by Priority");
-        System.out.printf("|  %-38s  |%n", "6. View Ticket Details");
-        System.out.printf("|  %-38s  |%n", "7. Add Response to Ticket");
-        System.out.printf("|  %-38s  |%n", "8. Update Ticket Status");
-        System.out.printf("|  %-38s  |%n", "9. Take/Assign Ticket");
-
-        if (staff.getStaffRole() == StaffRole.MANAGER || staff.getStaffRole() == StaffRole.TEAM_LEAD) {
-        System.out.printf("|  %-38s  |%n", "10. Assign Ticket to Staff");
-}
-
-        System.out.printf("|  %-38s  |%n", "0. Logout");
-        System.out.println("+------------------------------------------+");
-        System.out.print("Enter your choice: ");
-
-        int choice = getIntInput();
-
-        switch (choice) {
-            case 1:
-                List<Ticket> allTickets = ticketService.getAllTickets();
-                
-                System.out.println("\n===== ALL TICKETS =====");
-                if (allTickets.isEmpty()) {
-                    System.out.println("No tickets in the system.");
-                } else {
-                    for (Ticket ticket : allTickets) {
-                        System.out.println(ticket.getDisplayInfo());
-                    }
-                }
-                break;
-            case 2:
-                viewAssignedTickets(staff);
-                break;
-            case 3:
-                searchTickets(staff);
-                break;
-            case 4:
-                filterByStatus(staff);
-                break;
-            case 5:
-                filterByPriority(staff);
-                break;
-            case 6:
-                viewTicketDetailsStaff();
-                break;
-            case 7:
-                addResponseToTicket(staff);
-                break;
-            case 8:
-                updateTicketStatusStaff(staff);
-                break;
-            case 9:
-                updateTicketPriority(staff);
-                break;
-            case 10:
-                takeTicket(staff);
-                break;
-            case 11:
-                if (staff.getStaffRole() == StaffRole.MANAGER || staff.getStaffRole() == StaffRole.TEAM_LEAD) {
-                    assignTicketToStaff(staff);
-                } else {
-                    System.out.println("Invalid choice.");
-                }
-                break;
-            case 0:
-                authService.logout();
-                break;
-            default:
-                System.out.println("Invalid choice.");
-        }
-        if (choice != 0) {
-        pauseAndClear();
-}
-    }
-
-    private static void viewAssignedTickets(Staff staff) {
-        System.out.println("\n--- MY ASSIGNED TICKETS ---");
-        List<Ticket> tickets = staff.getAssignedTickets();
-        
-        if (tickets.isEmpty()) {
-            System.out.println("No tickets assigned to you.");
-            return;
-        }
-
-        for (Ticket ticket : tickets) {
-            System.out.println(ticket.getDisplayInfo());
-        }
-    }
-
-   private static void searchTickets(Staff staff) {
-        System.out.print("\nEnter search keyword: ");
-        String keyword = scanner.nextLine().trim();
-        List<Ticket> results = staff.searchTicketByKeyword(ticketService.getAllTickets(), keyword);
-        System.out.println("\n--- SEARCH RESULTS ---");
-        for (Ticket t : results) {
-            System.out.println(t.getDisplayInfo());
-        }
-    }
-    private static void filterByStatus(Staff staff) {
-        System.out.println("\nSelect Status:");
-        System.out.println("1. Open");
-        System.out.println("2. In Progress");
-        System.out.println("3. Pending");
-        System.out.println("4. Resolved");
-        System.out.println("5. Closed");
-        System.out.print("Choice: ");
-        
-        int choice = getIntInput();
-        TicketStatus status;
-        switch (choice) {
-            case 1: status = TicketStatus.OPEN; break;
-            case 2: status = TicketStatus.IN_PROGRESS; break;
-            case 3: status = TicketStatus.PENDING; break;
-            case 4: status = TicketStatus.RESOLVED; break;
-            case 5: status = TicketStatus.CLOSED; break;
-            default:
-                System.out.println("Invalid choice.");
-                return;
-        }
-      
-        List<Ticket> filtered = staff.filterTicketsByStatus(ticketService.getAllTickets(), status);
-        System.out.println("\n--- FILTERED TICKETS ---");
-        for(Ticket t : filtered) {
-            System.out.println(t.getDisplayInfo());
-        }
-    }
-
-    private static void filterByPriority(Staff staff) {
-        System.out.println("\nSelect Priority:");
-        System.out.println("1. Low");
-        System.out.println("2. Medium");
-        System.out.println("3. High");
-        System.out.print("Choice: ");
-        
-        int choice = getIntInput();
-        Priority priority;
-        switch (choice) {
-            case 1: priority = Priority.LOW; break;
-            case 2: priority = Priority.MEDIUM; break;
-            case 3: priority = Priority.HIGH; break;
-            default:
-                System.out.println("Invalid choice.");
-                return;
-        }
-        
-        List<Ticket> filtered = staff.filterTicketsByPriority(ticketService.getAllTickets(), priority);
-        System.out.println("\n--- FILTERED TICKETS ---");
-        for(Ticket t : filtered) {
-            System.out.println(t.getDisplayInfo());
-        }
-    }
-
-    private static void viewTicketDetailsStaff() {
-        System.out.print("\nEnter Ticket ID: ");
-        String ticketId = scanner.nextLine().trim();
-        
-        Ticket ticket = ticketService.getTicketById(ticketId);
-        if (ticket == null) {
-            System.out.println("Ticket not found.");
-            return;
-        }
-        System.out.println(ticket.getTicketDetails());
-    }
-
-    private static void addResponseToTicket(Staff staff) {
-        System.out.print("\nEnter Ticket ID: ");
-        String ticketId = scanner.nextLine().trim();
-        
-        Ticket ticket = ticketService.getTicketById(ticketId);
-        if (ticket == null) {
-            System.out.println("Ticket not found.");
-            return;
-        }
-
-        System.out.print("Enter your response: ");
-        String response = scanner.nextLine().trim();
-        if (response.isEmpty()) {
-            System.out.println("Response cannot be empty.");
-            return;
-        }
-
-        System.out.println(staff.addResponse(ticket, response));
-    }
-
-    private static void updateTicketPriority(Staff staff) {
-        System.out.print("\nEnter Ticket ID: ");
-        String ticketId = scanner.nextLine().trim();
-        
-        Ticket ticket = ticketService.getTicketById(ticketId);
-        if (ticket == null) {
-            System.out.println("Ticket not found.");
-            return;
-        }
-
-        System.out.println("Current Priority: " + ticket.getPriority().getDisplayName());
-        System.out.println("\nSelect New Priority:");
-        System.out.println("1. Low");
-        System.out.println("2. Medium");
-        System.out.println("3. High");
-        System.out.print("Choice: ");
-        
-        int choice = getIntInput();
-        Priority newPriority;
-        switch (choice) {
-            case 1: newPriority = Priority.LOW; break;
-            case 2: newPriority = Priority.MEDIUM; break;
-            case 3: newPriority = Priority.HIGH; break;
-            default:
-                System.out.println("Invalid choice.");
-                return;
-        }
-        
-        // Update the priority using the setter you already have in Ticket.java!
-        ticket.setPriority(newPriority);
-        System.out.println("Success! Ticket priority upgraded to " + newPriority.name());
-    }
-
-    private static void takeTicket(Staff staff) {
-        System.out.print("\nEnter Ticket ID to take: ");
-        String ticketId = scanner.nextLine().trim();
-        
-        Ticket ticket = ticketService.getTicketById(ticketId);
-        if (ticket == null) {
-            System.out.println("Ticket not found.");
-            return;
-        }
-
-        System.out.println(staff.takeTicket(ticket));
-    }
-
-    private static void assignTicketToStaff(Staff manager) {
-        System.out.print("\nEnter Ticket ID: ");
-        String ticketId = scanner.nextLine().trim();
-        
-        Ticket ticket = ticketService.getTicketById(ticketId);
-        if (ticket == null) {
-            System.out.println("Ticket not found.");
-            return;
-        }
-
-        // Show available staff
-        System.out.println("\nAvailable Staff:");
-        List<User> users = dataStore.getUsers();
-        int count = 1;
-        for (User user : users) {
-            if (user instanceof Staff) {
-                Staff s = (Staff) user;
-                System.out.println(count + ". " + s.getName() + " (" + s.getStaffId() + ") - " + s.getStaffRole().getDisplayName());
-                count++;
-            }
-        }
-
-        System.out.print("Enter Staff ID: ");
-        String staffId = scanner.nextLine().trim();
-        
-        Staff targetStaff = dataStore.findStaffById(staffId);
-        if (targetStaff == null) {
-            System.out.println("Staff not found.");
-            return;
-        }
-
-        System.out.println(manager.assignTicket(ticket, targetStaff));
-    }
-
-    // ==================== ADMIN MENU ====================
-    private static void showAdminMenu(Admin admin) {
-        System.out.println("\n+------------------------------------------+");
-        System.out.println("|              ADMIN DASHBOARD             |");
-        System.out.printf("|  Welcome, %-30s |%n", admin.getName());
-        System.out.println("+------------------------------------------+");
-        System.out.printf("|  %-38s  |%n", "1. Generate Monthly Report");
-        System.out.printf("|  %-38s  |%n", "2. View All Tickets");
-        System.out.printf("|  %-38s  |%n", "3. View All Users");
-        System.out.printf("|  %-38s  |%n", "4. View Audit Logs");
-        System.out.printf("|  %-38s  |%n", "5. Add New Staff");
-        System.out.printf("|  %-38s  |%n", "6. Manage FAQs");
-        System.out.printf("|  %-38s  |%n", "7. View Departments");
-        System.out.printf("|  %-38s  |%n", "8. Update Ticket Status");
-        System.out.printf("|  %-38s  |%n", "0. Logout");
-        System.out.println("+------------------------------------------+");
-        System.out.print("Enter your choice: ");
-
-        int choice = getIntInput();
-
-        switch (choice) {
-            case 1:
-                generateReport(admin);
-                break;
-            case 2:
-                viewAllTicketsAdmin();
-                break;
-            case 3:
-                viewAllUsers();
-                break;
-            case 4:
-               System.out.println("\n===== AUDIT LOGS =====");
-                System.out.println(admin.getAuditLogsAsString());
-                break;
-            case 5:
-                addNewStaff(admin);
-                break;
-            case 6:
-                manageFAQs(admin);
-                break;
-            case 7:
-                viewDepartments();
-                break;
-            case 8:
-                updateTicketStatusAdmin(admin);
-                break;
-            case 0:
-                authService.logout();
-                break;
-            default:
-                System.out.println("Invalid choice.");
-        }
-        if (choice != 0) {
-        pauseAndClear();}
-    }
-
-    private static void generateReport(Admin admin) {
-        System.out.print("\nEnter month (1-12): ");
-        int month = getIntInput();
-        if (month < 1 || month > 12) {
-            System.out.println("Invalid month.");
-            return;
-        }
-
-        System.out.print("Enter year: ");
-        int year = getIntInput();
-        if (year < 2000 || year > 2100) {
-            System.out.println("Invalid year.");
-            return;
-        }
-
-        Report report = admin.generateMonthlyReport(month, year, ticketService.getAllTickets());
-        // ARCHITECTURE FIX: Print the string returned by the model!
-        System.out.println(report.generateReport());
-    }
-
-    private static void viewAllTicketsAdmin() {
-        System.out.println("\n--- ALL TICKETS ---");
-        List<Ticket> tickets = ticketService.getAllTickets();
-        
-        if (tickets.isEmpty()) {
-            System.out.println("No tickets in the system.");
-            return;
-        }
-
-        for (Ticket ticket : tickets) {
-            System.out.println(ticket.getDisplayInfo());
-        }
-        System.out.println("\nTotal: " + tickets.size() + " ticket(s)");
-    }
-
-    private static void viewAllUsers() {
-        System.out.println("\n--- ALL USERS ---");
-        for (User user : dataStore.getUsers()) {
-            // ARCHITECTURE FIX: Print the string instead of calling void display()
-            System.out.println(user.getDisplayInfo());
-        }
-    }
-
-    private static void addNewStaff(Admin admin) {
-        System.out.println("\n--- ADD NEW STAFF ---");
-        String name;
-    while (true) {
-        System.out.print("Full Name: ");
-        name = scanner.nextLine().trim();
-        
-        if (name.isEmpty()) {
-            System.out.println("--> Error: Name cannot be empty! Please enter a valid name.");
-        } else {
-            break; 
-        }
-    }
-        String email;
-    while (true) {
-        System.out.print("Email: ");
-        email = scanner.nextLine().trim();
-        
-        
-        if (!authService.isValid(email)) {
-            System.out.println("--> Error: Invalid email format! Please include '@' and a domain.");
-        } 
-        
-        else if (dataStore.findUserByEmail(email) != null) {
-            System.out.println("--> Error: This email is already registered to another user!");
-        } 
-       
-        else {
-            break; 
-        }
-    }
-
-   
-    String password;
-    while (true) {
-        System.out.print("Password: ");
-        password = scanner.nextLine().trim();
-        
-        
-        if (!authService.isValidPassword(password)) {
-            System.out.println("--> Error: Password must be between 8 and 15 characters long.");
-        } else {
-            break; 
-        }
-    }
-        
-        System.out.println("\nSelect Role:");
-        System.out.println("1. Support Agent");
-        System.out.println("2. Senior Agent");
-        System.out.println("3. Team Lead");
-        System.out.println("4. Manager");
-        System.out.print("Choice: ");
-        int roleChoice = getIntInput();
-        
-        StaffRole role;
-        switch (roleChoice) {
-            case 1: role = StaffRole.SUPPORT_AGENT; break;
-            case 2: role = StaffRole.SENIOR_AGENT; break;
-            case 3: role = StaffRole.TEAM_LEAD; break;
-            case 4: role = StaffRole.MANAGER; break;
-            default:
-                System.out.println("Invalid role. Defaulting to Support Agent.");
-                role = StaffRole.SUPPORT_AGENT;
-                
-        
-        }
-
-        System.out.println("\nAvailable Departments:");
-        List<Department> departments = dataStore.getDepartments();
-        for (int i = 0; i < departments.size(); i++) {
-            System.out.println((i + 1) + ". " + departments.get(i).getDepartmentName());
-        }
-        System.out.print("Select department: ");
-        int deptChoice = getIntInput();
-        
-        String deptId = "DEPT-001";
-        if (deptChoice >= 1 && deptChoice <= departments.size()) {
-            deptId = departments.get(deptChoice - 1).getDepartmentId();
-        }
-
-        String userId = dataStore.generateUserId();
-        Staff newStaff = new Staff(userId, name, email, password, role, deptId);
-        admin.addUser(newStaff, dataStore.getUsers());
-        
-        System.out.println("Staff member added successfully!");
-        System.out.println("Staff ID: " + newStaff.getStaffId());
-    }
-    
-    public static void updateTicketStatusStaff(Staff staff){
-        System.out.print("\nEnter Ticket ID: ");
-        String ticketId = scanner.nextLine().trim();
-        
-        Ticket ticket = ticketService.getTicketById(ticketId);
-        if (ticket == null){
-            System.out.println("Ticket not found.");
-            return;
-        }
-        System.out.println("Current Status: " + ticket.getStatus().getDisplayName());
-        System.out.println("\nSelect New Status:");
-        System.out.println("1. Open");
-        System.out.println("2. In Progress");
-        System.out.println("3. Pending");
-        System.out.println("4. Resolved");
-        System.out.println("5. Closed");
-        System.out.print("Choice: ");
-        
-        int choice = getIntInput();
-        TicketStatus newStatus;
-        switch(choice){
-            case 1: newStatus = TicketStatus.OPEN; break;
-            case 2: newStatus = TicketStatus.IN_PROGRESS; break;
-            case 3: newStatus = TicketStatus.PENDING; break;
-            case 4: newStatus = TicketStatus.RESOLVED; break;
-            case 5: newStatus = TicketStatus.CLOSED; break;
-            default:
-                System.out.println("Invalid choice. Status not changed.");
-                return;
-        }
-        
-        ticketService.updateTicketStatus(ticketId, newStatus);
-        System.out.println("Successfully updated Ticket " + ticketId + " to " + newStatus.getDisplayName() );
-                
-        
-        
-    }
-    
-    public static void updateTicketStatusAdmin(Admin admin){
-        System.out.print("\nEnter Ticket ID: ");
-        String ticketId = scanner.nextLine().trim();
-        
-        Ticket ticket = ticketService.getTicketById(ticketId);
-        if (ticket == null){
-            System.out.println("Ticket not found.");
-            return;
-        }
-        System.out.println("Current Status: " + ticket.getStatus().getDisplayName());
-        System.out.println("\nSelect New Status:");
-        System.out.println("1. Open");
-        System.out.println("2. In Progress");
-        System.out.println("3. Pending");
-        System.out.println("4. Resolved");
-        System.out.println("5. Closed");
-        System.out.print("Choice: ");
-        
-        int choice = getIntInput();
-        TicketStatus newStatus;
-        switch(choice){
-            case 1: newStatus = TicketStatus.OPEN; break;
-            case 2: newStatus = TicketStatus.IN_PROGRESS; break;
-            case 3: newStatus = TicketStatus.PENDING; break;
-            case 4: newStatus = TicketStatus.RESOLVED; break;
-            case 5: newStatus = TicketStatus.CLOSED; break;
-            default:
-                System.out.println("Invalid choice. Status not changed.");
-                return;
-        }
-        
-        ticketService.updateTicketStatus(ticketId, newStatus);
-        System.out.println("Successfully updated Ticket " + ticketId + " to " + newStatus.getDisplayName() );
-                
-        
-        
-    }
-
-    private static void manageFAQs(Admin admin) {
-        System.out.println("\n--- MANAGE FAQs ---");
-        System.out.println("1. View All FAQs");
-        System.out.println("2. Add New FAQ");
-        System.out.print("Choice: ");
-        
-        int choice = getIntInput();
-        
-        if (choice == 1) {
-            viewFAQs();
-        } else if (choice == 2) {
-            System.out.print("Question: ");
-            String question = scanner.nextLine().trim();
-            System.out.print("Answer: ");
-            String answer = scanner.nextLine().trim();
-            System.out.print("Category: ");
-            String category = scanner.nextLine().trim();
-            
-           FAQ faq = new FAQ(question, answer);
-            
-            dataStore.getFaqs().add(faq); 
-            
-            admin.logAction("Added new FAQ: " + question);
-            System.out.println("FAQ added successfully!");
-        }
-    }
-
-   private static void viewDepartments() {
-        System.out.println("\n--- DEPARTMENTS ---");
-        for (Department dept : dataStore.getDepartments()) {
-            System.out.println(dept.getDisplayInfo());
-            System.out.println(dept.getUnsolvedTicketNumberString()); // The Waiter prints the new string!
-            System.out.println("-".repeat(40));
-        }
-    }
-
-    // ==================== UTILITY METHODS ====================
-    private static int getIntInput() {
-        try {
-            String input = scanner.nextLine().trim();
-            return Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
-    private static String padRight(String s, int n) {
-        if (s.length() >= n) {
-            return s.substring(0, n - 3) + "...";
-        }
-        return String.format("%-" + n + "s", s);
-    }
-    private static void pauseAndClear() {
-    System.out.println("\n+------------------------------------------+");
-    System.out.println("|      Press ENTER to continue...          |");
-    System.out.println("+------------------------------------------+");
-    scanner.nextLine(); // Wait for user to press Enter
-    
-    // "Clears" the screen by printing 50 empty lines
-    for (int i = 0; i < 50; i++) {
-        System.out.println();
-    }
-}
-
 }

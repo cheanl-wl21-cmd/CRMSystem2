@@ -22,8 +22,6 @@ public class DataStore {
     
     private int ticketCounter;
     private int userCounter;
-    
-    
 
     private DataStore() {
         users = new ArrayList<>();
@@ -46,7 +44,6 @@ public class DataStore {
     public void addUser(User user) { users.add(user); }
     public void addTicket(Ticket ticket) { tickets.add(ticket); }
     public void addFaq(FAQ faq) { faqs.add(faq); }
-
 
     public static DataStore getInstance() {
         if (database == null) {
@@ -79,8 +76,6 @@ public class DataStore {
         techSupport.addStaff(staff2);
         techSupport.addStaff(manager);
 
-        // Create sample customers
-        
         // Create products
         products.add(new Product("PROD-001", "Classic White T-Shirt", "Tops", 19.99));
         products.add(new Product("PROD-002", "Slim Fit Blue Jeans", "Bottoms", 49.99));
@@ -93,27 +88,25 @@ public class DataStore {
         products.add(new Product("PROD-009", "Denim Mini Skirt", "Bottoms", 24.99));
         products.add(new Product("PROD-010", "Athletic Joggers", "Activewear", 32.99));
 
-       
-
-        // Fixed FAQs 
         // --- Fixed FAQs Initial Data using Quick Constructor ---
-    faqs.add(new FAQ("How do I register an Account?", 
-        "Click on Register Account and follow the steps given."));
+        faqs.add(new FAQ("How do I register an Account?", 
+            "Click on Register Account and follow the steps given."));
 
-    faqs.add(new FAQ("How do I submit a ticket?", 
-        "Log in to your account, go to Support, and click 'New Ticket'."));
+        faqs.add(new FAQ("How do I submit a ticket?", 
+            "Log in to your account, go to Support, and click 'New Ticket'."));
 
-    faqs.add(new FAQ("What are the support hours?", 
-        "Our support team is available 24/7."));
+        faqs.add(new FAQ("What are the support hours?", 
+            "Our support team is available 24/7."));
 
-    faqs.add(new FAQ("What is the shop's return policy?", 
-        "You can return any apparel within 30 days of purchase provided tags are attached."));
+        faqs.add(new FAQ("What is the shop's return policy?", 
+            "You can return any apparel within 30 days of purchase provided tags are attached."));
 
-    faqs.add(new FAQ("How can I track my order?", 
-        "Once shipped, a tracking number will be updated in your ticket details."));
+        faqs.add(new FAQ("How can I track my order?", 
+            "Once shipped, a tracking number will be updated in your ticket details."));
 
-    faqs.add(new FAQ("Do you offer international shipping?", 
-        "Currently, we only ship within Malaysia. Plans to expand are underway."));    }
+        faqs.add(new FAQ("Do you offer international shipping?", 
+            "Currently, we only ship within Malaysia. Plans to expand are underway."));    
+    }
 
     public String generateTicketId() {
         return "TKT-" + (++ticketCounter);
@@ -123,10 +116,11 @@ public class DataStore {
         return String.valueOf(++userCounter);
     }
     
-    // FILE I/O SAVING & LOADING 
+    // ==========================================
+    //      FILE I/O SAVING & LOADING 
+    // ==========================================
 
     public void saveUsersToFile() {
-        // PrintWriter enable create a file with name user.csv
         try (PrintWriter writer = new PrintWriter(new FileWriter("users.csv"))) {
             for (User u : users) {
                 writer.println(u.toCSV()); 
@@ -146,28 +140,34 @@ public class DataStore {
 
         users.clear(); // Clear the dummy data 
 
-        // BufferedReader  enable reads the file line by line
         try (BufferedReader reader = new BufferedReader(new FileReader("users.csv"))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(","); // Cut the string at every comma
-                String type = parts[0]; // determine object based on first part  Admin, Customer, or Staff
+                String[] parts = line.split(","); 
+                
+                if (parts.length < 5) continue; // Safety check: Skip blank or broken lines!
+                
+                String type = parts[0]; 
 
-                // Rebuild the objects based on the type
                 if (type.equals("Customer")) {
                    Customer c = new Customer(parts[1], parts[2], parts[3], parts[4], parts[5], "default.png");
                    if (parts.length > 6) {
                     c.setProfilePic(parts[6]); 
                     }
-
                     users.add(c);
                 } 
                 else if (type.equals("Admin")) {
                     users.add(new Admin(parts[1], parts[2], parts[3], parts[4]));
                 } 
                 else if (type.equals("Staff")) {
-                    StaffRole role = StaffRole.valueOf(parts[5]); // Convert String back to Enum
-                    users.add(new Staff(parts[1], parts[2], parts[3], parts[4], role, parts[6]));
+                    if (parts.length >= 7) { // Safety check: Ensures staff line is complete
+                        try {
+                            StaffRole role = StaffRole.valueOf(parts[5]); 
+                            users.add(new Staff(parts[1], parts[2], parts[3], parts[4], role, parts[6]));
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("DataStore: Skipped a staff member with an invalid role.");
+                        }
+                    }
                 }
             }
             if (!users.isEmpty()) {
@@ -176,13 +176,13 @@ public class DataStore {
                     try {
                         int currentId = Integer.parseInt(u.getUserId());
                         if (currentId > maxUserId) {
-                            maxUserId = currentId; // Find the highest User ID
+                            maxUserId = currentId; 
                         }
                     } catch (NumberFormatException e) {
-                        // Ignore if it's the Admin ID "1" or Staff ID "2"
+                        // Ignore Admin "1" or Staff "2"
                     }
                 }
-                userCounter = maxUserId; // Set the system counter to the highest found!
+                userCounter = maxUserId; 
             }
             System.out.println("DataStore: Users loaded successfully from file.");
         } catch (Exception e) {
@@ -191,10 +191,9 @@ public class DataStore {
     }
     
     public void saveTicketsToFile() {
-        // Creates a file called tickets.txt
         try (PrintWriter writer = new PrintWriter(new FileWriter("tickets.txt"))) {
             for (Ticket t : tickets) {
-                writer.println(t.toTXT()); // Write the ticket using the | format
+                writer.println(t.toTXT()); 
             }
             System.out.println("DataStore: All tickets saved successfully to tickets.txt.");
         } catch (IOException e) {
@@ -209,36 +208,36 @@ public class DataStore {
             return;
         }
 
-        tickets.clear(); // Clear dummy data
+        tickets.clear(); 
 
         try (BufferedReader reader = new BufferedReader(new FileReader("tickets.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                // Split the line using the | symbol
                 String[] parts = line.split("\\|"); 
+                if (parts.length < 8) continue; // Safety check
                 
-                // Rebuild the ticket!
                 Ticket t = new Ticket(parts[0], parts[1], parts[4], Priority.valueOf(parts[5]));
                 t.setCustomerId(parts[2]);
                 
                 if (!parts[3].equals("null")) {
                     t.setAssignedStaffId(parts[3]);
+                    Staff assignedStaff = findStaffById(parts[3]);
+                    if (assignedStaff != null) {
+                        assignedStaff.getAssignedTickets().add(t);
+                    }
                 }
                 
                 t.updateStatus(TicketStatus.valueOf(parts[6]));
                 
-                // Convert the timestamp back into a real Date
                 long timestamp = Long.parseLong(parts[7]);
                 t.setDateSubmitted(new Date(timestamp));
                 
                 tickets.add(t);
             }
             
-            //increase ticketcounter prevent overlap
             if (!tickets.isEmpty()) {
-                int maxId = 1000; // Our base starting point
+                int maxId = 1000; 
                 for (Ticket t : tickets) {
-                    
                     String numberPart = t.getTicketId().replace("TKT-", "");
                     try {
                         int currentId = Integer.parseInt(numberPart);
@@ -249,19 +248,14 @@ public class DataStore {
                         // prevent error 
                     }
                 }
-                ticketCounter = maxId; // Set the system counter to the highest found
+                ticketCounter = maxId; 
             }
-            
             System.out.println("DataStore: Tickets loaded successfully from file.");
         } catch (Exception e) {
             System.out.println("DataStore Error: Ticket file corrupted or missing.");
         }
-        
     }
     
-    // ==========================================
-    //          FAQ FILE SAVING & LOADING
-    // ==========================================
     public void saveFAQsToFile() {
         try (PrintWriter writer = new PrintWriter(new FileWriter("faqs.txt"))) {
             for (FAQ faq : faqs) {
@@ -275,15 +269,15 @@ public class DataStore {
 
     public void loadFAQsFromFile() {
         java.io.File file = new java.io.File("faqs.txt");
-        if (!file.exists()) return; // If no file exists, just use the dummy data
+        if (!file.exists()) return; 
 
-        faqs.clear(); // Clear dummy data
+        faqs.clear(); 
         try (BufferedReader reader = new BufferedReader(new FileReader("faqs.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
                 if (parts.length == 2) {
-                    faqs.add(new FAQ(parts[0], parts[1])); // Rebuild the FAQ
+                    faqs.add(new FAQ(parts[0], parts[1])); 
                 }
             }
             System.out.println("DataStore: FAQs loaded successfully.");
@@ -292,13 +286,10 @@ public class DataStore {
         }
     }
 
-    // ==========================================
-    //      AUDIT LOG FILE SAVING & LOADING
-    // ==========================================
     public void saveAuditLogsToFile() {
         try (PrintWriter writer = new PrintWriter(new FileWriter("audit_logs.txt"))) {
             for (String log : auditLogs) {
-                writer.println(log); // Logs are just strings, so we print them directly!
+                writer.println(log); 
             }
             System.out.println("DataStore: Audit logs saved successfully.");
         } catch (IOException e) {
@@ -314,7 +305,7 @@ public class DataStore {
         try (BufferedReader reader = new BufferedReader(new FileReader("audit_logs.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                auditLogs.add(line); // Add the string directly back to the list
+                auditLogs.add(line); 
             }
             System.out.println("DataStore: Audit logs loaded successfully.");
         } catch (Exception e) {
@@ -322,8 +313,6 @@ public class DataStore {
         }
     }
     
-    
-   
     public User findUserByEmail(String email) {
         for (User u : users) {
             if (u.getEmail().equalsIgnoreCase(email)) {
@@ -344,7 +333,7 @@ public class DataStore {
     
     public Staff findStaffById(String staffId) {
         for (User u : users) {
-            if (u instanceof Staff) { //filter out the normal customers
+            if (u instanceof Staff) { 
                 Staff s = (Staff) u; 
                 if (s.getStaffId().equals(staffId)) {
                     return s;

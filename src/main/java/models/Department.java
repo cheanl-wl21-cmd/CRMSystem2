@@ -3,6 +3,7 @@ package models;
 import interfaces.Displayable;
 import java.util.ArrayList;
 import java.util.List;
+import services.DataStore; 
 
 public class Department implements Displayable {
     private String departmentId;
@@ -42,15 +43,25 @@ public class Department implements Displayable {
         }
     }
 
+    
     public String getUnsolvedTicketNumberString() {
-        int count = 0;
-        for (Ticket t : departmentTickets) {
-            if (t.getStatus() != enums.TicketStatus.CLOSED && 
-                t.getStatus() != enums.TicketStatus.RESOLVED) {
-                count++;
+        int actualUnsolvedCount = 0;
+        
+        
+        for (Ticket t : DataStore.getInstance().getTickets()) {
+            String assignedStaff = t.getAssignedStaffId();
+            if (assignedStaff != null && !assignedStaff.equals("null")) {
+                Staff s = DataStore.getInstance().findStaffById(assignedStaff);
+                
+                if (s != null && this.departmentId.equals(s.getDepartmentId())) {
+                    if (t.getStatus() != enums.TicketStatus.CLOSED && 
+                        t.getStatus() != enums.TicketStatus.RESOLVED) {
+                        actualUnsolvedCount++;
+                    }
+                }
             }
         }
-        return "Unsolved tickets in " + departmentName + ": " + count;
+        return "Unsolved tickets in " + departmentName + ": " + actualUnsolvedCount;
     }
 
     public void addStaff(Staff staff) {
@@ -62,9 +73,30 @@ public class Department implements Displayable {
         staffMembers.remove(staff);
     }
 
+   
     @Override
     public String getDisplayInfo() {
+        int actualStaffCount = 0;
+        // Count staff 
+        for (User u : DataStore.getInstance().getUsers()) {
+            if (u instanceof Staff && ((Staff)u).getDepartmentId().equals(this.departmentId)) {
+                actualStaffCount++;
+            }
+        }
+
+        int actualTicketCount = 0;
+        // Count tickets 
+        for (Ticket t : DataStore.getInstance().getTickets()) {
+            String assignedStaff = t.getAssignedStaffId();
+            if (assignedStaff != null && !assignedStaff.equals("null")) {
+                Staff s = DataStore.getInstance().findStaffById(assignedStaff);
+                if (s != null && this.departmentId.equals(s.getDepartmentId())) {
+                    actualTicketCount++;
+                }
+            }
+        }
+
         return String.format("Department: %s | ID: %s | Staff Count: %d | Tickets: %d",
-                departmentName, departmentId, staffMembers.size(), departmentTickets.size());
+                departmentName, departmentId, actualStaffCount, actualTicketCount);
     }
 }

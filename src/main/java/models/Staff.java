@@ -111,6 +111,7 @@ public class Staff extends User {
         return String.format("Staff ID: %s | Name: %s | Role: %s | Department: %s | Assigned Tickets: %d",
                 staffId, name, staffRole.getDisplayName(), departmentId, assignedTickets.size());
     }
+    
     @Override
     public String toCSV() {
         return "Staff," + userId + "," + name + "," + email + "," + password + "," + staffRole.name() + "," + departmentId;

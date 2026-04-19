@@ -6,3 +6,23 @@ Customer,5,Alice Brown,alice@email.com,cust123,123 Main St,default.png
 Customer,6,Bob Wilson,bob@email.com,cust123,456 Oak Ave,default.png
 Customer,101,hanyeu,hanyeu@gmail.com,123hanyeu,jalan sengkang lorong 8 ,default.png
 Customer,102,cust@crm.com,cust@crm.com,cust12345,cust,default.png
+Staff,201,Alice Smith,alice@crm.com,staff123,SUPPORT_AGENT,DEPT-001
+Staff,202,Bob Jones,bob@crm.com,staff123,SUPPORT_AGENT,DEPT-002
+Staff,203,Carol White,carol@crm.com,staff123,SUPPORT_AGENT,DEPT-003
+Staff,204,David Brown,david@crm.com,staff123,SENIOR_AGENT,DEPT-001
+Staff,205,Eve Davis,eve@crm.com,staff123,SENIOR_AGENT,DEPT-002
+Staff,206,Frank Miller,frank@crm.com,staff123,TEAM_LEAD,DEPT-003
+Staff,207,Grace Wilson,grace@crm.com,staff123,SUPPORT_AGENT,DEPT-001
+Staff,208,Harry Moore,harry@crm.com,staff123,SUPPORT_AGENT,DEPT-002
+Staff,209,Ivy Taylor,ivy@crm.com,staff123,SUPPORT_AGENT,DEPT-003
+Staff,210,Jack Anderson,jack@crm.com,staff123,SENIOR_AGENT,DEPT-001
+Staff,211,Karen Thomas,karen@crm.com,staff123,SENIOR_AGENT,DEPT-002
+Staff,212,Liam Jackson,liam@crm.com,staff123,SUPPORT_AGENT,DEPT-003
+Staff,213,Mia White,mia@crm.com,staff123,SUPPORT_AGENT,DEPT-001
+Staff,214,Noah Harris,noah@crm.com,staff123,SUPPORT_AGENT,DEPT-002
+Staff,215,Olivia Martin,olivia@crm.com,staff123,SENIOR_AGENT,DEPT-003
+Staff,216,Paul Thompson,paul@crm.com,staff123,TEAM_LEAD,DEPT-001
+Staff,217,Quinn Garcia,quinn@crm.com,staff123,SUPPORT_AGENT,DEPT-002
+Staff,218,Rose Martinez,rose@crm.com,staff123,SUPPORT_AGENT,DEPT-003
+Staff,219,Sam Robinson,sam@crm.com,staff123,SENIOR_AGENT,DEPT-001
+Staff,220,Tina Clark,tina@crm.com,staff123,MANAGER,DEPT-002

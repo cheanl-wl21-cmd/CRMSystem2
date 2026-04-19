@@ -4,7 +4,9 @@ models\Ticket.class
 interfaces\Reportable.class
 services\TicketService.class
 models\Department.class
+boundary\StaffBoundary.class
 models\Feedback.class
+boundary\CustomerBoundary.class
 models\AuditLog.class
 interfaces\Searchable.class
 models\Staff.class
@@ -16,6 +18,7 @@ services\ReportService.class
 services\AuthenticationService.class
 models\Message.class
 interfaces\Displayable.class
+boundary\AdminBoundary.class
 models\Product.class
 models\Customer.class
 com\mycompany\crmsystem\CRMSystem.class
