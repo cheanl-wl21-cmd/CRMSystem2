@@ -214,13 +214,49 @@ public class StaffBoundary {
 
     private void takeTicket(Staff staff) {
         System.out.print("\nEnter Ticket ID to take: ");
-        String ticketId = scanner.nextLine().trim();
+        String ticketId = scanner.nextLine().trim().toUpperCase(); 
+        
         Ticket ticket = ticketService.getTicketById(ticketId);
         if (ticket == null) {
             System.out.println("Ticket not found.");
             return;
         }
-        System.out.println(staff.takeTicket(ticket));
+
+        
+        String result = staff.takeTicket(ticket);
+        System.out.println(result);
+
+        
+        if (result.startsWith("Success")) {
+            System.out.println("\nPlease evaluate and set the Priority for this ticket:");
+            System.out.println("1. Low");
+            System.out.println("2. Medium");
+            System.out.println("3. High");
+            System.out.println("4. Keep Current Priority (" + ticket.getPriority().getDisplayName() + ")");
+            System.out.print("Choice: ");
+            
+            int choice = Utility.getIntInput();
+            switch (choice) {
+                case 1: 
+                    ticket.setPriority(Priority.LOW); 
+                    System.out.println("Priority updated to LOW."); 
+                    break;
+                case 2: 
+                    ticket.setPriority(Priority.MEDIUM); 
+                    System.out.println("Priority updated to MEDIUM."); 
+                    break;
+                case 3: 
+                    ticket.setPriority(Priority.HIGH); 
+                    System.out.println("Priority updated to HIGH."); 
+                    break;
+                case 4: 
+                    System.out.println("Priority unchanged."); 
+                    break;
+                default: 
+                    System.out.println("Invalid choice. Priority unchanged.");
+            }
+        }
+        
         dataStore.saveTicketsToFile(); 
     }
 

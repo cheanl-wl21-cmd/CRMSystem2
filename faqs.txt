@@ -5,3 +5,5 @@ What is the shop's return policy?|You can return any apparel within 30 days of p
 How can I track my order?|Once shipped, a tracking number will be updated in your ticket details.
 Do you offer international shipping?|Currently, we only ship within Malaysia. Plans to expand are underway.
 How to change your profile picture?|Place your chosen picture and type in the file name of the picture
+how can upload FAQ ?|Dear customer, you are not admin cannot add FAQ.
+|

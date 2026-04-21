@@ -32,6 +32,7 @@ public class AdminBoundary {
         System.out.printf("|  %-38s  |%n", "6. Manage FAQs");
         System.out.printf("|  %-38s  |%n", "7. View Departments");
         System.out.printf("|  %-38s  |%n", "8. Update Ticket Status");
+        System.out.printf("|  %-38s  |%n", "9. Reassign Ticket");
         System.out.printf("|  %-38s  |%n", "0. Logout");
         System.out.println("+------------------------------------------+");
         System.out.print("Enter your choice: ");
@@ -45,11 +46,13 @@ public class AdminBoundary {
             case 4:
                 System.out.println("\n===== AUDIT LOGS =====");
                 System.out.println(admin.getAuditLogsAsString());
+                        
                 break;
             case 5: addNewStaff(admin); break;
             case 6: manageFAQs(admin); break;
             case 7: viewDepartments(); break;
             case 8: updateTicketStatusAdmin(admin); break;
+            case 9: reassignTicket(admin); break;
             case 0: authService.logout(); break;
             default: System.out.println("Invalid choice.");
         }
@@ -247,5 +250,57 @@ public class AdminBoundary {
             System.out.println(dept.getUnsolvedTicketNumberString()); 
             System.out.println("-".repeat(40));
         }
+    }
+    private void reassignTicket(Admin admin) {
+        System.out.println("\n--- REASSIGN TICKET ---");
+        System.out.print("Enter Ticket ID to reassign: ");
+        String ticketId = scanner.nextLine().trim().toUpperCase();
+
+        Ticket ticket = ticketService.getTicketById(ticketId);
+        if (ticket == null) {
+            System.out.println("Ticket not found.");
+            return;
+        }
+
+        
+        String currentStaff = ticket.getAssignedStaffId();
+        System.out.println("Current Assigned Staff ID: " + (currentStaff != null ? currentStaff : "Unassigned"));
+
+        
+        System.out.println("\nAvailable Staff:");
+        List<User> users = dataStore.getUsers();
+        int count = 1;
+        for (User user : users) {
+            if (user instanceof Staff) {
+                Staff s = (Staff) user;
+                System.out.println(count + ". " + s.getName() + " (" + s.getStaffId() + ") - " + s.getStaffRole().getDisplayName());
+                count++;
+            }
+        }
+
+        System.out.print("\nEnter New Staff ID: ");
+        String staffId = scanner.nextLine().trim().toUpperCase();
+
+        Staff targetStaff = dataStore.findStaffById(staffId);
+        if (targetStaff == null) {
+            System.out.println("Error: Staff not found in the system.");
+            return;
+        }
+
+        
+        ticket.setAssignedStaffId(targetStaff.getStaffId());
+        
+        
+        if(ticket.getStatus() == TicketStatus.OPEN || ticket.getStatus() == TicketStatus.PENDING) {
+             ticket.updateStatus(TicketStatus.IN_PROGRESS);
+        }
+        
+        admin.logAction("Admin reassigned Ticket " + ticket.getTicketId() + " to Staff " + targetStaff.getStaffId());
+
+        System.out.println("--> Success! Ticket " + ticket.getTicketId() + " has been reassigned to " + targetStaff.getName());
+
+        
+        dataStore.saveTicketsToFile();
+        dataStore.saveAuditLogsToFile();
     }
 }
